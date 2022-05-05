@@ -36,6 +36,8 @@ namespace Articles.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] SignInModel signInModel)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var result = await _accountRepository.LoginAsync(signInModel);
 
             if (string.IsNullOrEmpty(result))

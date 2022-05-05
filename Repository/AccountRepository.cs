@@ -46,6 +46,9 @@ namespace Articles.Repository
 
         public async Task<string> LoginAsync(SignInModel signInModel)
         {
+            // Find out if there are any accounts with the same email as you just entered
+            var user = await _userManager.FindByEmailAsync(signInModel.Email);
+            if (user == null) throw new Exception("Couldn't find user'");
             var result = await _signInManager.PasswordSignInAsync(signInModel.Email, signInModel.Password, false, false);
 
             if (!result.Succeeded)

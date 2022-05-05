@@ -17,6 +17,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using Articles.Views.FluentValidation;
 
 namespace Articles
 {
@@ -37,8 +40,10 @@ namespace Articles
             // add automapper
             services.AddAutoMapper(typeof(Startup));
 
-            // add Controller and Json --- partially update items
-            services.AddControllers().AddNewtonsoftJson();
+            // add Controller + Json = partially update items + FluentValidation register all validators
+            // services.AddTransient<IValidator<SignInModel>, SignInValidation>();
+            // services.AddTransient<IValidator<SignUpModel>, SignUpValidation>();
+            services.AddControllers().AddNewtonsoftJson().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SignInValidation>());
 
             // add connectString
             services.AddDbContext<ArticleContext>(options =>
@@ -56,6 +61,7 @@ namespace Articles
             services.AddIdentity<AppUser, IdentityRole>()
             .AddEntityFrameworkStores<ArticleContext>()
             .AddDefaultTokenProviders();
+
             // add Authentication
             services.AddAuthentication(option =>
            {
@@ -77,17 +83,49 @@ namespace Articles
                    };
                });
 
-            // add services
+
+            //* add services
             services.AddTransient<IArticleRepository, ArticleRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();
 
-            // add swagger
-            // services.AddSwaggerGen(c =>
-            // {
-            //     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Add Swagger Articles", Version = "v1" });
-            // });
 
+
+
+            //add swagger , add authentication header swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Articles API", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                  {
+                    {
+                      new OpenApiSecurityScheme
+                      {
+                        Reference = new OpenApiReference
+                          {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                          },
+                          Scheme = "oauth2",
+                          Name = "Bearer",
+                          In = ParameterLocation.Header,
+                        },
+                        new List<string>()
+                      }
+                    });
+            });
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -95,12 +133,19 @@ namespace Articles
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                // add swagger
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
+
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseRouting();
 
+            // add authentication
             app.UseAuthentication();
             app.UseAuthorization();
 
