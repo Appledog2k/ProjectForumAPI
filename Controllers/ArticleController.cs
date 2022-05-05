@@ -1,5 +1,6 @@
 using Articles.Models;
 using Articles.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,8 @@ namespace Articles.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class ArticleController : ControllerBase
     {
         private readonly IArticleRepository _articleRepository;
@@ -16,6 +19,7 @@ namespace Articles.Controllers
             _articleRepository = articleRepository;
         }
         [HttpGet("")]
+
         public async Task<IActionResult> GetAllArticles()
         {
             var articles = await _articleRepository.GetAllArticlesAsync();

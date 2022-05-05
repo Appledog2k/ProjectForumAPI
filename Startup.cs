@@ -14,6 +14,9 @@ using Articles.Repository;
 using Microsoft.OpenApi.Models;
 using Articles.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Articles
 {
@@ -45,10 +48,34 @@ namespace Articles
             });
 
 
+
+
+
+
             // add Identity
             services.AddIdentity<AppUser, IdentityRole>()
             .AddEntityFrameworkStores<ArticleContext>()
             .AddDefaultTokenProviders();
+            // add Authentication
+            services.AddAuthentication(option =>
+           {
+               option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+               option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+               option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+           })
+               .AddJwtBearer(option =>
+               {
+                   option.SaveToken = true;
+                   option.RequireHttpsMetadata = false;
+                   option.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                   {
+                       ValidateIssuer = true,
+                       ValidateAudience = true,
+                       ValidAudience = Configuration["JWT:ValidAudience"],
+                       ValidIssuer = Configuration["JWT:ValidIssuer"],
+                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+                   };
+               });
 
             // add services
             services.AddTransient<IArticleRepository, ArticleRepository>();
@@ -69,33 +96,17 @@ namespace Articles
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // use swagger
-            // app.UseSwagger();
-            // app.UseSwaggerUI(c =>
-            // {
-            //     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Add Swagger Articles");
-            // });
-
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                // endpoints.MapRazorPages();
             });
         }
     }
