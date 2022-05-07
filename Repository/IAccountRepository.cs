@@ -5,8 +5,11 @@ namespace Articles.Repository
 {
     public interface IAccountRepository
     {
-        Task<IdentityResult> SignUpAsync(SignUpModel signUpModel);
-        Task<string> LoginAsync(SignInModel signInModel);
+        Task<AccountManagerResponse> SignUpAsync(SignUpModel signUpModel);
+        Task<AccountManagerResponse> LoginAsync(SignInModel signInModel);
+        Task<AccountManagerResponse> ConfirmEmailAsync(string userId, string token);
+        Task<AccountManagerResponse> ForgetPasswordAsync(string email);
+        Task<AccountManagerResponse> ResetPasswordAsync(ResetPasswordViewModel resetPasswordViewModel);
 
     }
 }

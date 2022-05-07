@@ -3,30 +3,28 @@ using Articles.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-
 namespace Articles.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-
     public class ArticleController : ControllerBase
     {
         private readonly IArticleRepository _articleRepository;
         public ArticleController(IArticleRepository articleRepository)
         {
-
             _articleRepository = articleRepository;
         }
-        [HttpGet("")]
 
+        //*get all : /api/article 
+        [HttpGet("")]
         public async Task<IActionResult> GetAllArticles()
         {
             var articles = await _articleRepository.GetAllArticlesAsync();
             return Ok(articles);
         }
 
-        // get items by Id
+        //*get by id : /api/article/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetArticleById([FromRoute] int id)
         {
@@ -34,7 +32,7 @@ namespace Articles.Controllers
             return Ok(articles);
         }
 
-        // add article 
+        //*create : /api/article
         [HttpPost("")]
         public async Task<IActionResult> AddNewArticle([FromBody] ArticleModel articleModel)
         {
@@ -42,7 +40,7 @@ namespace Articles.Controllers
             return CreatedAtAction(nameof(GetArticleById), new { id = id, controller = "article" }, id);
         }
 
-        // update article
+        //*update : /api/article/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateArticle([FromRoute] int id, [FromBody] ArticleModel articleModel)
 
@@ -51,7 +49,7 @@ namespace Articles.Controllers
             return Ok();
         }
 
-        // update article patch
+        //*update patch : /api/article/{id}
         [HttpPatch("{id}")]
         public async Task<IActionResult> UpdateArticlePatch([FromRoute] int id, [FromBody] JsonPatchDocument articleModel)
 
@@ -60,10 +58,9 @@ namespace Articles.Controllers
             return Ok();
         }
 
-        // delete article
+        //*delete : /api/article/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteArticle([FromRoute] int id)
-
         {
             await _articleRepository.DeleteArticleAsync(id);
             return Ok();
