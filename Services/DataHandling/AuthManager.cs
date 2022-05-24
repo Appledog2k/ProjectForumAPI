@@ -4,26 +4,20 @@ using System.Text;
 using Articles.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-
-using System.Linq;
-
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
+using Articles.Models.DTOs;
+using Articles.Data;
 
-namespace Articles.Repository
+namespace Articles.Services.DataHandling
 {
-    public class AccountRepository : IAccountRepository
+    public class AuthManager : IAuthManager
     {
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
+        private readonly UserManager<ApiUser> _userManager;
+        private readonly SignInManager<ApiUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly ISendMailService _sendMailService;
 
-        public AccountRepository(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IConfiguration configuration, ISendMailService sendMailService)
+        public AuthManager(UserManager<ApiUser> userManager, SignInManager<ApiUser> signInManager, IConfiguration configuration, ISendMailService sendMailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -32,11 +26,11 @@ namespace Articles.Repository
         }
 
         //  TODO: Sign Up
-        public async Task<AccountManagerResponse> SignUpAsync(SignUpModel signUpModel)
+        public async Task<AccountManagerResponse> SignUpAsync(UserDTO userDTO)
         {
-            if (signUpModel == null) throw new NullReferenceException("SignUpModel is null");
+            if (userDTO == null) throw new NullReferenceException("SignUpModel is null");
 
-            if (signUpModel.Password != signUpModel.ConfirmPassword)
+            if (userDTO.Password != userDTO.ConfirmPassword)
             {
                 return new AccountManagerResponse
                 {
@@ -46,28 +40,31 @@ namespace Articles.Repository
                 };
             }
 
-            var user = new AppUser()
+            var user = new ApiUser()
             {
-                FirstName = signUpModel.FirstName,
-                LastName = signUpModel.LastName,
-                Email = signUpModel.Email,
-                UserName = signUpModel.Email
+                FirstName = userDTO.FirstName,
+                LastName = userDTO.LastName,
+                Email = userDTO.Email,
+                UserName = userDTO.Email
             };
 
-            var result = await _userManager.CreateAsync(user, signUpModel.Password);
+            var result = await _userManager.CreateAsync(user, userDTO.Password);
+
             // test succeeded
             if (result.Succeeded)
             {
                 var confirmEmailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var encodedEmailToken = Encoding.UTF8.GetBytes(confirmEmailToken);
                 var validEmailToken = WebEncoders.Base64UrlEncode(encodedEmailToken);
+
                 string url = $"{_configuration["AppUrl"]}/api/account/confirmemail?userid={user.Id}&token={validEmailToken}";
 
                 var mailContent = new MailContent();
-                mailContent.To = signUpModel.Email;
+                mailContent.To = userDTO.Email;
                 mailContent.Subject = "Sign In Articles Page";
                 mailContent.Body = $"<p>Please click the link to confirm your email: <a href='{url}'>Click here</a></p>";
                 await _sendMailService.SendGMailAsync(mailContent);
+                await _userManager.AddToRolesAsync(user, userDTO.Roles);
 
                 return new AccountManagerResponse
                 {
@@ -89,10 +86,10 @@ namespace Articles.Repository
 
         // TODO: Login
 
-        public async Task<AccountManagerResponse> LoginAsync(SignInModel signInModel)
+        public async Task<AccountManagerResponse> LoginAsync(LoginUserDTO loginUserDTO)
         {
             // Find out if there are any accounts with the same email as you just entered
-            var user = await _userManager.FindByEmailAsync(signInModel.Email);
+            var user = await _userManager.FindByEmailAsync(loginUserDTO.Email);
             if (user == null)
             {
                 return new AccountManagerResponse
@@ -102,7 +99,7 @@ namespace Articles.Repository
                     Errors = new List<string> { "User not found" }
                 };
             }
-            var result = await _userManager.CheckPasswordAsync(user, signInModel.Password);
+            var result = await _userManager.CheckPasswordAsync(user, loginUserDTO.Password);
             if (!result)
             {
                 return new AccountManagerResponse
@@ -114,7 +111,7 @@ namespace Articles.Repository
             // claim ownership
             var authClaims = new List<Claim>
             {
-                new Claim("Email", signInModel.Email),
+                new Claim("Email", loginUserDTO.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
             };
             //coding for JWT

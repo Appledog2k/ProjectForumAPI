@@ -1,9 +1,9 @@
 version: "3.7"
 
 services:
-  nqhsql-mssql:
+  server01sql-mssql:
     image: "mcr.microsoft.com/mssql/server:2017-latest"
-    container_name: sqlserver-nqhsql
+    container_name: sqlserver-server01sql
     restart: always
     hostname: mssql
     environment:
@@ -19,4 +19,4 @@ services:
 
 volumes:
   mssqlvolume:
-    name: sqlserver-nqhsql-vl
+    name: sqlserver-server01sql-vl

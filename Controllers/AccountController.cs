@@ -1,5 +1,6 @@
 using Articles.Models;
-using Articles.Repository;
+using Articles.Models.DTOs;
+using Articles.Services.DataHandling;
 using Microsoft.AspNetCore.Mvc;
 namespace Articles.Controllers
 {
@@ -7,16 +8,16 @@ namespace Articles.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly IAccountRepository _accountRepository;
+        private readonly IAuthManager _authManager;
         // private readonly ISendMail _sendMail;
         private readonly ISendMailService _sendMailService;
         private readonly IConfiguration _configuration;
 
 
-        public AccountController(IAccountRepository accountRepository, ISendMailService sendMailService, IConfiguration configuration)
+        public AccountController(IAuthManager authManager, ISendMailService sendMailService, IConfiguration configuration)
 
         {
-            _accountRepository = accountRepository;
+            _authManager = authManager;
             _sendMailService = sendMailService;
             _configuration = configuration;
         }
@@ -24,16 +25,16 @@ namespace Articles.Controllers
         //* /api/account/login
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] SignInModel signInModel)
+        public async Task<IActionResult> Login([FromBody] LoginUserDTO loginUserDTO)
         {
             if (ModelState.IsValid)
             {
-                var result = await _accountRepository.LoginAsync(signInModel);
+                var result = await _authManager.LoginAsync(loginUserDTO);
                 if (result.IsSuccess)
                 {
                     var mailContent = new MailContent();
 
-                    mailContent.To = signInModel.Email;
+                    mailContent.To = loginUserDTO.Email;
                     mailContent.Subject = "Sign In Articles Page";
                     mailContent.Body = "<h1>Hey!, new login to your account noticed</h1><p>New login to your account at " + DateTime.Now + "</p>";
                     await _sendMailService.SendGMailAsync(mailContent);
@@ -48,18 +49,20 @@ namespace Articles.Controllers
         //* /api/account/signup
 
         [HttpPost("signup")]
-        public async Task<IActionResult> SignUp([FromBody] SignUpModel signUpModel)
+        public async Task<IActionResult> SignUp([FromBody] UserDTO userDTO)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _accountRepository.SignUpAsync(signUpModel);
-                if (result.IsSuccess)
-                {
-                    return Ok(result);
-                }
-                return BadRequest(result);
-            }
-            return BadRequest("Some properties are not invalid");
+            // if (ModelState.IsValid)
+            // {
+            //     var result = await _accountRepository.SignUpAsync(signUpModel);
+            //     if (result.IsSuccess)
+            //     {
+            //         return Ok(result);
+            //     }
+            //     return BadRequest(result);
+            // }
+            // return BadRequest("Some properties are not invalid");
+            var result = await _authManager.SignUpAsync(userDTO);
+            return Ok(result);
         }
 
         //* /api/account/confirmemail?userid&token
@@ -70,7 +73,7 @@ namespace Articles.Controllers
             {
                 return NotFound();
             }
-            var result = await _accountRepository.ConfirmEmailAsync(userId, token);
+            var result = await _authManager.ConfirmEmailAsync(userId, token);
             if (result.IsSuccess)
             {
                 return Redirect($"{_configuration["AppUrl"]}/confirmemail.html");
@@ -87,7 +90,7 @@ namespace Articles.Controllers
             {
                 return NotFound();
             }
-            var result = await _accountRepository.ForgetPasswordAsync(email);
+            var result = await _authManager.ForgetPasswordAsync(email);
             if (result.IsSuccess)
             {
                 return Ok(result); // status code 200
@@ -101,7 +104,7 @@ namespace Articles.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _accountRepository.ResetPasswordAsync(resetPasswordModel);
+                var result = await _authManager.ResetPasswordAsync(resetPasswordModel);
                 if (result.IsSuccess)
                 {
                     return Ok(result); // status code 200

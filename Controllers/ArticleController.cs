@@ -1,13 +1,10 @@
-using Articles.Models;
-using Articles.Repository;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-namespace Articles.Controllers
+using Articles.Services.DataHandling;
+
+namespace Project_Articles.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class ArticleController : ControllerBase
     {
         private readonly IArticleRepository _articleRepository;
@@ -16,54 +13,27 @@ namespace Articles.Controllers
             _articleRepository = articleRepository;
         }
 
-        //*get all : /api/article 
-        [HttpGet("")]
-        public async Task<IActionResult> GetAllArticles()
+        [HttpGet]
+        public async Task<IActionResult> GetArticles()
         {
-            var articles = await _articleRepository.GetAllArticlesAsync();
-            return Ok(articles);
+            try
+            {
+                var articles = await _articleRepository.GetArticles();
+                return Ok(articles);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error. Please try again later.");
+            }
         }
 
-        //*get by id : /api/article/{id}
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetArticleById([FromRoute] int id)
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetArticle(int id)
         {
-            var articles = await _articleRepository.GetArticleByIdAsync(id);
-            return Ok(articles);
-        }
+            var article = await _articleRepository.GetArticle(id);
 
-        //*create : /api/article
-        [HttpPost("")]
-        public async Task<IActionResult> AddNewArticle([FromBody] ArticleModel articleModel)
-        {
-            var id = await _articleRepository.AddArticleAsync(articleModel);
-            return CreatedAtAction(nameof(GetArticleById), new { id = id, controller = "article" }, id);
-        }
-
-        //*update : /api/article/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateArticle([FromRoute] int id, [FromBody] ArticleModel articleModel)
-
-        {
-            await _articleRepository.UpdateArticleAsync(id, articleModel);
-            return Ok();
-        }
-
-        //*update patch : /api/article/{id}
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateArticlePatch([FromRoute] int id, [FromBody] JsonPatchDocument articleModel)
-
-        {
-            await _articleRepository.UpdateArticlePatchAsync(id, articleModel);
-            return Ok();
-        }
-
-        //*delete : /api/article/{id}
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteArticle([FromRoute] int id)
-        {
-            await _articleRepository.DeleteArticleAsync(id);
-            return Ok();
+            // ResourceException
+            return Ok(article);
         }
 
 

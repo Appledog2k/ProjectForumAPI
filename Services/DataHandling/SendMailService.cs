@@ -3,7 +3,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace Articles.Repository
+namespace Articles.Services.DataHandling
 {
     public class SendMailService : ISendMailService
     {

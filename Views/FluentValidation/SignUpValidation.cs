@@ -1,9 +1,9 @@
-using Articles.Models;
+using Articles.Models.DTOs;
 using FluentValidation;
 
 namespace Articles.Views.FluentValidation
 {
-    class SignUpValidation : AbstractValidator<SignUpModel>
+    class SignUpValidation : AbstractValidator<UserDTO>
     {
         public SignUpValidation()
         {

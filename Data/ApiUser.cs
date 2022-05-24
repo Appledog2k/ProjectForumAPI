@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Articles.Models
+namespace Articles.Data
 {
-    public class AppUser : IdentityUser
+    public class ApiUser : IdentityUser
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
