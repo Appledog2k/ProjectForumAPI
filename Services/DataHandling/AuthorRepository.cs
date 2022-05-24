@@ -1,3 +1,4 @@
+using Articles.Data;
 using Articles.GenericRepository.IRepository;
 using Articles.Models.DTOs;
 using AutoMapper;
@@ -17,14 +18,29 @@ namespace Articles.Services.DataHandling
             _logger = logger;
             _mapper = mapper;
         }
-        public Task<object> CreateAuthor(Create_AuthorDTO authorDTO)
+        public async Task<object> CreateAuthor(Create_AuthorDTO authorDTO)
         {
-            throw new NotImplementedException();
+            var author = _mapper.Map<Author>(authorDTO);
+            await _unitOfWork.Authors.InsertAsync(author);
+            await _unitOfWork.Save();
+            return new
+            {
+                id = author.Id,
+                author
+            };
         }
 
-        public Task<string> DeleteAuthor(int id)
+        public async Task<string> DeleteAuthor(int id)
         {
-            throw new NotImplementedException();
+            var author = await _unitOfWork.Authors.GetAsync(q => q.Id == id);
+            if (author == null || id < 1)
+            {
+                return "Author not found";
+            }
+
+            await _unitOfWork.Authors.DeleteAsync(id);
+            await _unitOfWork.Save();
+            return "Author deleted";
         }
 
         public async Task<object> GetAuthor(int id)
@@ -47,9 +63,18 @@ namespace Articles.Services.DataHandling
             };
         }
 
-        public Task<string> UpdateAuthor(int id, Create_AuthorDTO authorDTO)
+        public async Task<string> UpdateAuthor(int id, Create_AuthorDTO authorDTO)
         {
-            throw new NotImplementedException();
+            var author = await _unitOfWork.Authors.GetAsync(q => q.Id == id);
+            if (author == null)
+            {
+                return "Author not found";
+            }
+
+            _mapper.Map(authorDTO, author);
+            _unitOfWork.Authors.Update(author);
+            await _unitOfWork.Save();
+            return "Author updated";
         }
     }
 }

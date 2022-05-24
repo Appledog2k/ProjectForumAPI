@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.WebUtilities;
 using Articles.Models.DTOs;
 using Articles.Data;
+using Articles.Services.Mail;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Articles.Services.DataHandling
 {
@@ -16,16 +18,22 @@ namespace Articles.Services.DataHandling
         private readonly SignInManager<ApiUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly ISendMailService _sendMailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthManager(UserManager<ApiUser> userManager, SignInManager<ApiUser> signInManager, IConfiguration configuration, ISendMailService sendMailService)
+        public AuthManager(UserManager<ApiUser> userManager,
+                           SignInManager<ApiUser> signInManager,
+                           IConfiguration configuration,
+                           ISendMailService sendMailService,
+                           IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _sendMailService = sendMailService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        //  TODO: Sign Up
+        //  TODO: Sign Up --- done
         public async Task<AccountManagerResponse> SignUpAsync(UserDTO userDTO)
         {
             if (userDTO == null) throw new NullReferenceException("SignUpModel is null");
@@ -84,7 +92,7 @@ namespace Articles.Services.DataHandling
 
         }
 
-        // TODO: Login
+        // TODO: Login --- done
 
         public async Task<AccountManagerResponse> LoginAsync(LoginUserDTO loginUserDTO)
         {
@@ -127,6 +135,12 @@ namespace Articles.Services.DataHandling
                 );
 
             string tokenAsString = new JwtSecurityTokenHandler().WriteToken(token);
+            var mailContent = new MailContent();
+
+            mailContent.To = loginUserDTO.Email;
+            mailContent.Subject = "Sign In Articles Page";
+            mailContent.Body = "<h1>Hey!, new login to your account noticed</h1><p>New login to your account at " + DateTime.Now + "</p>";
+            await _sendMailService.SendGMailAsync(mailContent);
             return new AccountManagerResponse
             {
                 Message = tokenAsString,
@@ -135,7 +149,8 @@ namespace Articles.Services.DataHandling
             };
         }
 
-        // TODO: Confirm Email
+
+        // TODO: Confirm Email --- done
         public async Task<AccountManagerResponse> ConfirmEmailAsync(string userId, string token)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -155,7 +170,7 @@ namespace Articles.Services.DataHandling
             {
                 return new AccountManagerResponse
                 {
-                    Message = "Email confirmed successfully",
+                    Message = "Email confirmed",
                     IsSuccess = true,
                 };
             }
@@ -170,7 +185,7 @@ namespace Articles.Services.DataHandling
             }
         }
 
-        // TODO: Forget Password
+        // TODO: Forget Password --- done
         public async Task<AccountManagerResponse> ForgetPasswordAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -199,7 +214,7 @@ namespace Articles.Services.DataHandling
                 IsSuccess = true
             };
         }
-        // TODO: Reset Password
+        // TODO: Reset Password --- done
 
         public async Task<AccountManagerResponse> ResetPasswordAsync(ResetPasswordViewModel resetPasswordViewModel)
         {

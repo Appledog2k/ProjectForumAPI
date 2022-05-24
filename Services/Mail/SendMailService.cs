@@ -1,9 +1,10 @@
 using Articles.Models;
+using Articles.Services.Mail;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace Articles.Services.DataHandling
+namespace Articles.Services.Mail
 {
     public class SendMailService : ISendMailService
     {

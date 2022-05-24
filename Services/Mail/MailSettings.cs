@@ -1,4 +1,4 @@
-namespace Articles.Models
+namespace Articles.Services.Mail
 {
     public class MailSettings
     {

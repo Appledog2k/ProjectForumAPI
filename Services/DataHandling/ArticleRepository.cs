@@ -1,4 +1,5 @@
 using Articles.Controllers;
+using Articles.Data;
 using Articles.GenericRepository.IRepository;
 using Articles.Models.DTOs;
 using AutoMapper;
@@ -18,14 +19,29 @@ namespace Articles.Services.DataHandling
             _logger = logger;
             _mapper = mapper;
         }
-        public Task<object> CreateArticle(Create_ArticleDTO articleDTO)
+        public async Task<object> CreateArticle(Create_ArticleDTO articleDTO)
         {
-            throw new NotImplementedException();
+            var article = _mapper.Map<Article>(articleDTO);
+            await _unitOfWork.Articles.InsertAsync(article);
+            await _unitOfWork.Save();
+            return new
+            {
+                id = article.Id,
+                article
+            };
         }
 
-        public Task<string> DeleteArticle(int id)
+        public async Task<string> DeleteArticle(int id)
         {
-            throw new NotImplementedException();
+            var article = await _unitOfWork.Articles.GetAsync(pt => pt.Id == id);
+            if (article == null)
+            {
+                return "Article not found";
+            }
+
+            await _unitOfWork.Articles.DeleteAsync(id);
+            await _unitOfWork.Save();
+            return "Article deleted";
         }
 
         public async Task<object> GetArticle(int id)
@@ -48,9 +64,17 @@ namespace Articles.Services.DataHandling
             };
         }
 
-        public Task<string> UpdateArticle(int id, Create_ArticleDTO articleDTO)
+        public async Task<string> UpdateArticle(int id, Create_ArticleDTO articleDTO)
         {
-            throw new NotImplementedException();
+            var article = await _unitOfWork.Articles.GetAsync(pt => pt.Id == id);
+            if (article == null)
+            {
+                return "Article not found";
+            }
+            _mapper.Map(articleDTO, article);
+            _unitOfWork.Articles.Update(article);
+            await _unitOfWork.Save();
+            return "Article updated successfully";
         }
     }
 }

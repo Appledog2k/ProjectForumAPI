@@ -71,6 +71,7 @@ namespace Articles.GenericRepository.Repository
         public async Task InsertAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
+
         }
 
         public async Task InsertRangeAsync(IEnumerable<T> entities)

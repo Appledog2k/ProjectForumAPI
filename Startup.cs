@@ -13,6 +13,8 @@ using Articles.GenericRepository.Repository;
 using Articles.GenericRepository.IRepository;
 using Articles.Services.DataHandling;
 using Articles.Models.DTOs;
+using Articles.Services.Mail;
+using Articles.Services.ServiceSetting;
 
 namespace Articles
 {
@@ -56,36 +58,13 @@ namespace Articles
 });
 
 
-            //* add Identity
+            // todo : Identity
 
-            services.AddIdentity<ApiUser, IdentityRole>()
-            .AddEntityFrameworkStores<DatabaseContext>()
-            .AddDefaultTokenProviders();
+            services.ConfigureIdentity();
 
-            //* add Authentication
+            // todo : JWT
 
-            services.AddAuthentication(option =>
-           {
-               option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-               option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-               option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-           })
-               .AddJwtBearer(option =>
-               {
-                   option.SaveToken = true;
-                   option.RequireHttpsMetadata = false;
-                   option.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
-                   {
-                       ValidateIssuer = true,
-                       ValidateAudience = true,
-                       ValidAudience = Configuration["JWT:ValidAudience"],
-                       ValidIssuer = Configuration["JWT:ValidIssuer"],
-                       RequireExpirationTime = true, //time deadline
-                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"])),// create symmetric key
-                       ValidateIssuerSigningKey = true
-                   };
-               });
-
+            services.JWT(Configuration);
 
             //* add services
 

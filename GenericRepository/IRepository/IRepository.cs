@@ -11,6 +11,7 @@ namespace Articles.GenericRepository.IRepository
         Task<T> GetAsync(Expression<Func<T, bool>> expression, List<string> includes = null);
 
         Task InsertAsync(T entity);
+
         Task InsertRangeAsync(IEnumerable<T> entities);
 
         Task DeleteAsync(int id);

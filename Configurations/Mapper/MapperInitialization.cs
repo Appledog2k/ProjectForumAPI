@@ -7,19 +7,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Articles.Helpers
+namespace Articles.Configurations.Mapper
 {
-    public class ApplicationMapper : Profile
+    public class MapperInitialization : Profile
     {
-        public ApplicationMapper()
+        public MapperInitialization()
         {
             CreateMap<Article, ArticleDTO>().ReverseMap();
             CreateMap<Article, Create_ArticleDTO>().ReverseMap();
             CreateMap<Author, AuthorDTO>().ReverseMap();
             CreateMap<Author, Create_AuthorDTO>().ReverseMap();
             CreateMap<ApiUser, UserDTO>().ReverseMap();
-
-
         }
     }
 }

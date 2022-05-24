@@ -1,6 +1,6 @@
 using Articles.Models;
 
-namespace Articles.Services.DataHandling
+namespace Articles.Services.Mail
 {
     public interface ISendMailService
     {

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Articles.Services.DataHandling;
+using Microsoft.AspNetCore.Authorization;
+using Articles.Models.DTOs;
 
 namespace Project_Articles.Controllers
 {
@@ -27,6 +29,7 @@ namespace Project_Articles.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetArticle(int id)
         {
@@ -36,6 +39,30 @@ namespace Project_Articles.Controllers
             return Ok(article);
         }
 
+        [HttpPost]
+        [Authorize]
+
+        public async Task<IActionResult> CreateArticle([FromBody] Create_ArticleDTO articleDTO)
+        {
+            var result = await _articleRepository.CreateArticle(articleDTO);
+            return Ok(result);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateArticle(int id, [FromBody] Create_ArticleDTO articleDTO)
+        {
+            var result = await _articleRepository.UpdateArticle(id, articleDTO);
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteArticle(int id)
+        {
+            var result = await _articleRepository.DeleteArticle(id);
+            return Ok(result);
+        }
 
     }
 }
