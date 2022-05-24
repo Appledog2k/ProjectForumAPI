@@ -62,11 +62,11 @@ namespace Articles.Controllers
 
         // todo : reset password
         [HttpPost("ResetPassword")]
-        public async Task<IActionResult> ResetPassword([FromForm] ResetPasswordViewModel resetPasswordModel)
+        public async Task<IActionResult> ResetPassword([FromForm] ResetPasswordDTO resetPasswordDTO)
         {
-            var result = await _authManager.ResetPasswordAsync(resetPasswordModel);
-
+            var result = await _authManager.ResetPasswordAsync(resetPasswordDTO);
             return Ok(result);
         }
+
     }
 }

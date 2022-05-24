@@ -216,9 +216,9 @@ namespace Articles.Services.DataHandling
         }
         // TODO: Reset Password --- done
 
-        public async Task<AccountManagerResponse> ResetPasswordAsync(ResetPasswordViewModel resetPasswordViewModel)
+        public async Task<AccountManagerResponse> ResetPasswordAsync(ResetPasswordDTO resetPasswordDTO)
         {
-            var user = await _userManager.FindByEmailAsync(resetPasswordViewModel.Email);
+            var user = await _userManager.FindByEmailAsync(resetPasswordDTO.Email);
             if (user == null)
             {
                 return new AccountManagerResponse
@@ -229,7 +229,7 @@ namespace Articles.Services.DataHandling
                 };
             }
 
-            if (resetPasswordViewModel.NewPassword != resetPasswordViewModel.ConfirmPassword)
+            if (resetPasswordDTO.NewPassword != resetPasswordDTO.ConfirmPassword)
             {
                 return new AccountManagerResponse
                 {
@@ -238,10 +238,10 @@ namespace Articles.Services.DataHandling
                 };
             }
 
-            var decodedToken = WebEncoders.Base64UrlDecode(resetPasswordViewModel.Token);
+            var decodedToken = WebEncoders.Base64UrlDecode(resetPasswordDTO.Token);
             string normalToken = Encoding.UTF8.GetString(decodedToken);
 
-            var result = await _userManager.ResetPasswordAsync(user, normalToken, resetPasswordViewModel.NewPassword);
+            var result = await _userManager.ResetPasswordAsync(user, normalToken, resetPasswordDTO.NewPassword);
             if (result.Succeeded)
             {
                 return new AccountManagerResponse

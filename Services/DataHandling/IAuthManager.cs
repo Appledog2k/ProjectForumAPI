@@ -10,7 +10,7 @@ namespace Articles.Services.DataHandling
 
         Task<AccountManagerResponse> ConfirmEmailAsync(string userId, string token);
         Task<AccountManagerResponse> ForgetPasswordAsync(string email);
-        Task<AccountManagerResponse> ResetPasswordAsync(ResetPasswordViewModel resetPasswordViewModel);
+        Task<AccountManagerResponse> ResetPasswordAsync(ResetPasswordDTO resetPasswordDTO);
 
     }
 }

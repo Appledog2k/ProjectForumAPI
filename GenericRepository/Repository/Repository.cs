@@ -15,18 +15,6 @@ namespace Articles.GenericRepository.Repository
             _dbSet = _context.Set<T>();
         }
 
-        // todo : delete
-        public async Task DeleteAsync(int id)
-        {
-            var delArticle = await _dbSet.FindAsync(id);
-            _dbSet.Remove(delArticle);
-        }
-
-        public void DeleteRangeAsync(IEnumerable<T> entities)
-        {
-            _dbSet.RemoveRange(entities);
-        }
-
         // todo : get article
         public async Task<IList<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, List<string> includes = null)
         {
@@ -73,11 +61,13 @@ namespace Articles.GenericRepository.Repository
             await _dbSet.AddAsync(entity);
 
         }
-
-        public async Task InsertRangeAsync(IEnumerable<T> entities)
+        // todo : delete
+        public async Task DeleteAsync(int id)
         {
-            await _dbSet.AddRangeAsync(entities);
+            var delArticle = await _dbSet.FindAsync(id);
+            _dbSet.Remove(delArticle);
         }
+
 
         // todo : Update article
 
