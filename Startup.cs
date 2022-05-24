@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Articles.Data;
-using Articles.Repository;
 using Microsoft.OpenApi.Models;
 using Articles.Models;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +9,13 @@ using System.Text;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using Articles.Views.FluentValidation;
+using Articles.GenericRepository.Repository;
+using Articles.GenericRepository.IRepository;
+using Articles.Services.DataHandling;
+using Articles.Models.DTOs;
+using Articles.Services.Mail;
+using Articles.Services.ServiceSetting;
+
 namespace Articles
 {
     public class Startup
@@ -24,6 +30,7 @@ namespace Articles
         {
             //* Add Razor pages
             services.AddRazorPages();
+
             //* add send mail
             services.AddOptions();
             var mailsettings = Configuration.GetSection("MailSettings");
@@ -35,54 +42,37 @@ namespace Articles
 
             //* add Controller + Json = partially update items + FluentValidation register all validators
 
-            services.AddTransient<IValidator<SignInModel>, SignInValidation>();
-            services.AddTransient<IValidator<SignUpModel>, SignUpValidation>();
-            services.AddControllersWithViews().AddNewtonsoftJson().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SignInValidation>());
+            services.AddTransient<IValidator<LoginUserDTO>, SignInValidation>();
+            services.AddTransient<IValidator<UserDTO>, SignUpValidation>();
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            }).AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SignInValidation>());
 
             //* add connectString
 
-            services.AddDbContext<ArticleContext>(options =>
-            {
-                string connectString = Configuration.GetConnectionString("ArticleContext");
-                options.UseSqlServer(connectString);
-            });
+            services.AddDbContext<DatabaseContext>(options =>
+{
+    string connectString = Configuration.GetConnectionString("DatabaseContext");
+    options.UseSqlServer(connectString);
+});
 
 
-            //* add Identity
+            // todo : Identity
 
-            services.AddIdentity<AppUser, IdentityRole>()
-            .AddEntityFrameworkStores<ArticleContext>()
-            .AddDefaultTokenProviders();
+            services.ConfigureIdentity();
 
-            //* add Authentication
+            // todo : JWT
 
-            services.AddAuthentication(option =>
-           {
-               option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-               option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-               option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-           })
-               .AddJwtBearer(option =>
-               {
-                   option.SaveToken = true;
-                   option.RequireHttpsMetadata = false;
-                   option.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
-                   {
-                       ValidateIssuer = true,
-                       ValidateAudience = true,
-                       ValidAudience = Configuration["JWT:ValidAudience"],
-                       ValidIssuer = Configuration["JWT:ValidIssuer"],
-                       RequireExpirationTime = true, //time deadline
-                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"])),// create symmetric key
-                       ValidateIssuerSigningKey = true
-                   };
-               });
-
+            services.JWT(Configuration);
 
             //* add services
 
             services.AddTransient<IArticleRepository, ArticleRepository>();
-            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<IAuthManager, AuthManager>();
+            services.AddTransient<IAuthorRepository, AuthorRepository>();
+
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             //* add send mail services
 
