@@ -46,14 +46,14 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3"/>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Services\Resource\Resource.Designer.cs">
+    <Compile Update="Services/Resource/Resource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Services\Resource/Resource1.resx">
+    <EmbeddedResource Update="Services/Resource/Resource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
