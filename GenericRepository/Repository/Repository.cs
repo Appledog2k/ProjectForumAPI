@@ -2,11 +2,12 @@ using System.Linq.Expressions;
 using Articles.Data;
 using Articles.GenericRepository.IRepository;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.EntityFrameworkCore.Query;
 namespace Articles.GenericRepository.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
+        // todo : ctor
         private readonly DatabaseContext _context;
         private readonly DbSet<T> _dbSet;
         public Repository(DatabaseContext context)
@@ -16,7 +17,10 @@ namespace Articles.GenericRepository.Repository
         }
 
         // todo : get article
-        public async Task<IList<T>> GetAllAsync(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, List<string> includes = null)
+        public async Task<IList<T>> GetAllAsync(
+        Expression<Func<T, bool>> expression = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
             IQueryable<T> query = _dbSet;
 
@@ -25,12 +29,9 @@ namespace Articles.GenericRepository.Repository
                 query = query.Where(expression);
             }
 
-            if (includes != null)
+            if (include != null)
             {
-                foreach (var includePropery in includes)
-                {
-                    query = query.Include(includePropery);
-                }
+                query = include(query);
             }
 
             if (orderBy != null)
@@ -41,26 +42,27 @@ namespace Articles.GenericRepository.Repository
             return await query.AsNoTracking().ToListAsync();
         }
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>> expression, List<string> includes = null)
+        // todo : get article
+        public async Task<T> GetAsync(
+        Expression<Func<T, bool>> expression,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
             IQueryable<T> query = _dbSet;
-            if (includes != null)
+            if (include != null)
             {
-                foreach (var includePropery in includes)
-                {
-                    query = query.Include(includePropery);
-                }
+                query = include(query);
             }
+
             return await query.AsNoTracking().FirstOrDefaultAsync(expression);
         }
 
-
-        // todo : Insert article
+        // todo : Insert
         public async Task InsertAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
 
         }
+
         // todo : delete
         public async Task DeleteAsync(int id)
         {
@@ -69,8 +71,7 @@ namespace Articles.GenericRepository.Repository
         }
 
 
-        // todo : Update article
-
+        // todo : Update
         public void Update(T entity)
         {
             _dbSet.Attach(entity);

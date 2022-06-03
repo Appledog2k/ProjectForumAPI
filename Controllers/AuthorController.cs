@@ -1,5 +1,7 @@
 using Articles.Models.DTOs;
+using Articles.Models.Response;
 using Articles.Services.DataHandling;
+using Articles.Services.Resource;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,18 +21,14 @@ namespace Project_Articles.Controllers
         public async Task<IActionResult> GetAuthors()
         {
             var authors = await _authorRepository.GetAuthors();
-
-            // ResourceException
-            return Ok(authors);
+            return Ok(new Response(Resource.GET_SUCCESS, authors));
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAuthor(int id)
         {
             var author = await _authorRepository.GetAuthor(id);
-
-            // ResourceException
-            return Ok(author);
+            return Ok(new Response(Resource.GET_SUCCESS, new { id = id }, author));
         }
 
         [HttpPost]
@@ -39,7 +37,7 @@ namespace Project_Articles.Controllers
         public async Task<IActionResult> CreateAuthor([FromBody] Create_AuthorDTO authorDTO)
         {
             var result = await _authorRepository.CreateAuthor(authorDTO);
-            return Ok(result);
+            return Ok(new Response(Resource.CREATE_SUCCESS, null, result));
         }
 
         [HttpPut("{id}")]
@@ -47,7 +45,7 @@ namespace Project_Articles.Controllers
         public async Task<IActionResult> UpdateAuthor(int id, [FromBody] Create_AuthorDTO authorDTO)
         {
             var result = await _authorRepository.UpdateAuthor(id, authorDTO);
-            return Ok(result);
+            return Ok(new Response(result));
         }
 
         [HttpDelete("{id}")]
@@ -55,9 +53,7 @@ namespace Project_Articles.Controllers
         public async Task<IActionResult> DeleteAuthor(int id)
         {
             var result = await _authorRepository.DeleteAuthor(id);
-            return Ok(result);
+            return Ok(new Response(result));
         }
-
-
     }
 }

@@ -1,7 +1,6 @@
 using Articles.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Articles.Configuration.Entities
 {
     public class ArticleConfiguration : IEntityTypeConfiguration<Article>
@@ -9,6 +8,7 @@ namespace Articles.Configuration.Entities
         public void Configure(EntityTypeBuilder<Article> builder)
         {
             builder.HasData(
+
                 new Article
                 {
                     Id = 1,
@@ -17,6 +17,7 @@ namespace Articles.Configuration.Entities
                     Content = "Content of article 1",
                     AuthorId = 1
                 },
+
                 new Article
                 {
                     Id = 2,
@@ -25,6 +26,7 @@ namespace Articles.Configuration.Entities
                     Content = "Content of article 2",
                     AuthorId = 2
                 },
+
                 new Article
                 {
                     Id = 3,
@@ -34,6 +36,7 @@ namespace Articles.Configuration.Entities
                     AuthorId = 3
                 }
             );
+            // todo : Key
             builder.HasKey(options => options.Id);
             builder.HasOne(options => options.Author).WithMany(options => options.Articles).HasForeignKey(options => options.AuthorId);
         }

@@ -1,5 +1,4 @@
 using Articles.Data;
-
 namespace Articles.GenericRepository.IRepository
 {
     public interface IUnitOfWork : IDisposable
