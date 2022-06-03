@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-
 namespace Articles.Data
 {
     public class ApiUser : IdentityUser

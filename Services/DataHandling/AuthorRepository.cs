@@ -2,6 +2,7 @@ using Articles.Data;
 using Articles.GenericRepository.IRepository;
 using Articles.Models.DTOs;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Project_Articles.Controllers;
 
 namespace Articles.Services.DataHandling
@@ -45,7 +46,7 @@ namespace Articles.Services.DataHandling
 
         public async Task<object> GetAuthor(int id)
         {
-            var author = await _unitOfWork.Authors.GetAsync(query => query.Id == id, new List<string> { "Articles" });
+            var author = await _unitOfWork.Authors.GetAsync(query => query.Id == id, q => q.Include(x => x.Articles));
             var result = _mapper.Map<AuthorDTO>(author);
             return new
             {

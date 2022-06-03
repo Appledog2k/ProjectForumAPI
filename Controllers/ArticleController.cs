@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Articles.Services.DataHandling;
 using Microsoft.AspNetCore.Authorization;
 using Articles.Models.DTOs;
+using Articles.Models.Response;
+using Articles.Services.Resource;
 
 namespace Project_Articles.Controllers
 {
@@ -18,15 +20,8 @@ namespace Project_Articles.Controllers
         [HttpGet]
         public async Task<IActionResult> GetArticles()
         {
-            try
-            {
-                var articles = await _articleRepository.GetArticles();
-                return Ok(articles);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal Server Error. Please try again later.");
-            }
+            var articles = await _articleRepository.GetArticles();
+            return Ok(new Response(Resource.GET_SUCCESS, articles));
         }
 
         [Authorize]
@@ -34,18 +29,15 @@ namespace Project_Articles.Controllers
         public async Task<IActionResult> GetArticle(int id)
         {
             var article = await _articleRepository.GetArticle(id);
-
-            // ResourceException
-            return Ok(article);
+            return Ok(new Response(Resource.GET_SUCCESS, new { id = id }, article));
         }
 
         [HttpPost]
         [Authorize]
-
         public async Task<IActionResult> CreateArticle([FromBody] Create_ArticleDTO articleDTO)
         {
             var result = await _articleRepository.CreateArticle(articleDTO);
-            return Ok(result);
+            return Ok(new Response(Resource.CREATE_SUCCESS, null, result));
         }
 
         [HttpPut("{id}")]
@@ -53,7 +45,7 @@ namespace Project_Articles.Controllers
         public async Task<IActionResult> UpdateArticle(int id, [FromBody] Create_ArticleDTO articleDTO)
         {
             var result = await _articleRepository.UpdateArticle(id, articleDTO);
-            return Ok(result);
+            return Ok(new Response(result));
         }
 
         [HttpDelete("{id}")]
@@ -61,7 +53,7 @@ namespace Project_Articles.Controllers
         public async Task<IActionResult> DeleteArticle(int id)
         {
             var result = await _articleRepository.DeleteArticle(id);
-            return Ok(result);
+            return Ok(new Response(result));
         }
 
     }

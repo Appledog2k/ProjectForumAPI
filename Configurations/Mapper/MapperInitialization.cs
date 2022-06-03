@@ -1,12 +1,6 @@
 using Articles.Data;
-using Articles.Models;
 using Articles.Models.DTOs;
 using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace Articles.Configurations.Mapper
 {
     public class MapperInitialization : Profile

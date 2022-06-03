@@ -1,6 +1,5 @@
 using Articles.Data;
 using Articles.GenericRepository.IRepository;
-
 namespace Articles.GenericRepository.Repository
 {
     public class UnitOfWork : IUnitOfWork
@@ -14,7 +13,6 @@ namespace Articles.GenericRepository.Repository
         }
 
         public IRepository<Article> Articles => _articles ??= new Repository<Article>(_context);
-
         public IRepository<Author> Authors => _authors ??= new Repository<Author>(_context);
 
         public void Dispose()
@@ -22,11 +20,9 @@ namespace Articles.GenericRepository.Repository
             _context.Dispose();
             GC.SuppressFinalize(this);
         }
-
         public async Task Save()
         {
             await _context.SaveChangesAsync();
         }
     }
-
 }

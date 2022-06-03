@@ -3,7 +3,6 @@ namespace Articles.Models.DTOs
     public class Create_AuthorDTO
     {
         public string Name { get; set; }
-
     }
     public class AuthorDTO : Create_AuthorDTO
     {

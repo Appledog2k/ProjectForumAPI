@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace Articles.Configuration.Entities
 {
     public class RoleConfiguration : IEntityTypeConfiguration<IdentityRole>
@@ -15,6 +14,7 @@ namespace Articles.Configuration.Entities
                     Name = "Admin",
                     NormalizedName = "ADMIN"
                 },
+
                 new IdentityRole
                 {
 

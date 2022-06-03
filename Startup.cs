@@ -28,6 +28,7 @@ namespace Articles
         public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
+
             //* Add Razor pages
             services.AddRazorPages();
 
@@ -78,8 +79,6 @@ namespace Articles
 
             // services.AddTransient<ISendMail, SendMail>();
             services.AddTransient<ISendMailService, SendMailService>();
-
-
             //* Access IdentityOptions
 
             services.Configure<IdentityOptions>(options =>
@@ -172,6 +171,9 @@ namespace Articles
 
             //* Make doc mail confirm 
             app.UseStaticFiles();
+
+            // todo : Error
+            app.ConfigureExceptionHandler();
 
             app.UseRouting();
 
