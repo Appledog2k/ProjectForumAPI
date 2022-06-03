@@ -1,22 +1,18 @@
 version: "3.7"
 
 services:
-  nqhsql-mssql:
+  server01sql-mssql:
     image: "mcr.microsoft.com/mssql/server:2017-latest"
-    container_name: sqlserver-nqhsql
+    container_name: sqlserver-server01sql
     restart: always
     hostname: mssql
     environment:
-      SA_PASSWORD: Password123 #Thiết lập password
+      SA_PASSWORD: Password123 
       ACCEPT_EULA: "Y"
-      # Express:
-
     volumes:
-      - mssqlvolume:/var/opt/mssql/data # thư mục lưu DB
-      # - ./bk:/var/opt/mssql/backup
+      - mssqlvolume:/var/opt/mssql/data 
     ports:
       - "1433:1433"
-
 volumes:
   mssqlvolume:
-    name: sqlserver-nqhsql-vl
+    name: sqlserver-server01sql-vl

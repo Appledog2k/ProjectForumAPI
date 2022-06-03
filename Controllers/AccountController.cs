@@ -1,49 +1,65 @@
 using Articles.Models;
-using Articles.Repository;
+using Articles.Models.DTOs;
+using Articles.Models.Response;
+using Articles.Services.DataHandling;
+using Articles.Services.Mail;
+using Articles.Services.Resource;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace Articles.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly IAccountRepository _accountRepository;
-
-        public AccountController(IAccountRepository accountRepository)
+        // todo : ctor
+        private readonly IAuthManager _authManager;
+        private readonly IConfiguration _configuration;
+        public AccountController(IAuthManager authManager, IConfiguration configuration)
         {
-            _accountRepository = accountRepository;
+            _authManager = authManager;
+            _configuration = configuration;
         }
 
-        [HttpPost("signup")]
-        public async Task<IActionResult> SignUp([FromBody] SignUpModel signUpModel)
+        // todo : login
+        [HttpPost("/login")]
+        public async Task<IActionResult> Login([FromBody] LoginUserDTO loginUserDTO)
         {
-            var result = await _accountRepository.SignUpAsync(signUpModel);
-
-            if (result.Succeeded)
-            {
-                return Ok(result.Succeeded);
-            }
-
-            return Unauthorized();
+            var result = await _authManager.LoginAsync(loginUserDTO);
+            return Ok(new Response(Resource.LOGIN_SUCCESS, null, new { Token = result }));
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] SignInModel signInModel)
+        // todo : register
+        [HttpPost("/register")]
+        public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
         {
-            var result = await _accountRepository.LoginAsync(signInModel);
+            var result = await _authManager.SignUpAsync(userDTO);
+            return Ok(new Response(Resource.REGISTER_SUCCESS));
 
-            if (string.IsNullOrEmpty(result))
-            {
-                return Unauthorized();
-            }
+        }
 
+        // todo : confirmEmail
+        [HttpGet("confirmemail")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            var result = await _authManager.ConfirmEmailAsync(userId, token);
+            return Redirect($"{_configuration["AppUrl"]}/confirmemail.html");
+        }
+
+        // todo : forgetPassword
+        [HttpPost("ForgetPassword")]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var result = await _authManager.ForgetPasswordAsync(email);
             return Ok(result);
         }
+
+        // todo : reset password
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword([FromForm] ResetPasswordDTO resetPasswordDTO)
+        {
+            var result = await _authManager.ResetPasswordAsync(resetPasswordDTO);
+            return Ok(result);
+        }
+
     }
 }
