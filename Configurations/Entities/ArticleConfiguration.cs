@@ -12,16 +12,16 @@ namespace Articles.Configuration.Entities
                 new Article
                 {
                     Id = 1,
-                    Title = "Article 1",
+                    Title = "Đây là bài viết 1",
                     Created = new System.DateTime(2019, 1, 1),
-                    Content = "Content of article 1",
+                    Content = "Nội dung bài viết 1",
                     AuthorId = 1
                 },
 
                 new Article
                 {
                     Id = 2,
-                    Title = "Article 2",
+                    Title = "Đây là bài viết 2",
                     Created = new System.DateTime(2019, 1, 1),
                     Content = "Content of article 2",
                     AuthorId = 2

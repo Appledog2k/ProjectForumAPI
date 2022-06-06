@@ -1,21 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-using Articles.Data;
-using Microsoft.OpenApi.Models;
-using Articles.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using FluentValidation.AspNetCore;
-using FluentValidation;
-using Articles.Views.FluentValidation;
-using Articles.GenericRepository.Repository;
-using Articles.GenericRepository.IRepository;
-using Articles.Services.DataHandling;
-using Articles.Models.DTOs;
 using Articles.Services.Mail;
 using Articles.Services.ServiceSetting;
-
 namespace Articles
 {
     public class Startup
@@ -24,162 +8,75 @@ namespace Articles
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
+
         public void ConfigureServices(IServiceCollection services)
         {
 
-            //* Add Razor pages
+            // todo : Add Razor pages
             services.AddRazorPages();
 
-            //* add send mail
+            // todo : Mail
             services.AddOptions();
             var mailsettings = Configuration.GetSection("MailSettings");
             services.Configure<MailSettings>(mailsettings);
 
-            //* add automapper
+            // todo : Identity
+            services.ConfigureIdentity();
+
+            // todo : add automapper
 
             services.AddAutoMapper(typeof(Startup));
 
-            //* add Controller + Json = partially update items + FluentValidation register all validators
-
-            services.AddTransient<IValidator<LoginUserDTO>, SignInValidation>();
-            services.AddTransient<IValidator<UserDTO>, SignUpValidation>();
+            // todo : add Controller + Json
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            }).AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SignInValidation>());
+            });
 
-            //* add connectString
-
-            services.AddDbContext<DatabaseContext>(options =>
-{
-    string connectString = Configuration.GetConnectionString("DatabaseContext");
-    options.UseSqlServer(connectString);
-});
-
-
-            // todo : Identity
-
-            services.ConfigureIdentity();
+            // todo : ConnectString
+            services.ConfigureConnectString();
 
             // todo : JWT
+            services.ConfigureJWT(Configuration);
 
-            services.JWT(Configuration);
+            // todo : services
+            services.ConfigureServices();
 
-            //* add services
+            // todo : Options Identity
+            services.ConfigureIdentityOptions();
 
-            services.AddTransient<IArticleRepository, ArticleRepository>();
-            services.AddTransient<IAuthManager, AuthManager>();
-            services.AddTransient<IAuthorRepository, AuthorRepository>();
-
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-
-            //* add send mail services
-
-            // services.AddTransient<ISendMail, SendMail>();
-            services.AddTransient<ISendMailService, SendMailService>();
-            //* Access IdentityOptions
-
-            services.Configure<IdentityOptions>(options =>
-            {
-                // Setting Password
-                options.Password.RequireDigit = false; // Not number required
-                options.Password.RequireLowercase = false; // Không bắt phải có chữ thường
-                options.Password.RequireNonAlphanumeric = false; // Không bắt ký tự đặc biệt
-                options.Password.RequireUppercase = false; // Không bắt buộc chữ in
-                options.Password.RequiredLength = 3; // Số ký tự tối thiểu của password
-                options.Password.RequiredUniqueChars = 1; // Số ký tự riêng biệt
-
-                // Cấu hình Lockout - khóa user
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Khóa 5 phút
-                options.Lockout.MaxFailedAccessAttempts = 5; // Thất bại 5 lầ thì khóa
-                options.Lockout.AllowedForNewUsers = true;
-
-                // Cấu hình về User.
-                options.User.AllowedUserNameCharacters = // các ký tự đặt tên user
-                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                options.User.RequireUniqueEmail = true;  // Email là duy nhất
-
-                // Cấu hình đăng nhập.
-                options.SignIn.RequireConfirmedEmail = true;            // Cấu hình xác thực địa chỉ email (email phải tồn tại)
-                options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
-
-            });
-
-
-
-
-            //* add swagger , add authentication header swagger
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Articles API", Version = "v1" });
-
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n
-                      Enter 'Bearer' [space] and then your token in the text input below.
-                      \r\n\r\nExample: 'Bearer 12345abcdef'",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
-                });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                  {
-                    {
-                      new OpenApiSecurityScheme
-                      {
-                        Reference = new OpenApiReference
-                          {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                          },
-                          Scheme = "oauth2",
-                          Name = "Bearer",
-                          In = ParameterLocation.Header,
-                        },
-                        new List<string>()
-                      }
-                    });
-            });
-            IMvcBuilder builder = services.AddRazorPages();
-
-
+            // todo : Configure Swagger
+            services.ConfigureSwagger();
         }
 
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        //* This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
 
-                //* add swagger
                 app.UseSwagger();
+
                 app.UseSwaggerUI();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
 
-            //* Make doc mail confirm 
             app.UseStaticFiles();
 
-            // todo : Error
             app.ConfigureExceptionHandler();
 
             app.UseRouting();
 
-            //* add authentication and authorization
-
             app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -187,7 +84,6 @@ namespace Articles
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
             });
-
         }
     }
 }

@@ -64,7 +64,7 @@ namespace Articles.Services.DataHandling
             };
         }
 
-        public async Task<string> UpdateArticle(int id, Create_ArticleDTO articleDTO)
+        public async Task<string> UpdateArticle(int id, Update_ArticleDTO articleDTO)
         {
             var article = await _unitOfWork.Articles.GetAsync(pt => pt.Id == id);
             if (article == null)
