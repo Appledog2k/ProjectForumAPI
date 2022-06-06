@@ -1,5 +1,6 @@
 using Articles.Data;
 using Articles.GenericRepository.IRepository;
+using Articles.Models;
 using Articles.Models.DTOs;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -33,15 +34,16 @@ namespace Articles.Services.DataHandling
 
         public async Task<string> DeleteArticle(int id)
         {
-            var article = await _unitOfWork.Articles.GetAsync(pt => pt.Id == id);
+            var article = await _unitOfWork.Articles.GetAsync(q => q.Id == id);
             if (article == null)
             {
-                return "Article not found";
+                _logger.LogError($"Invalid DELETE attempt in {nameof(DeleteArticle)}");
+                throw new BusinessException(Resource.Resource.NOT_DATA);
             }
 
             await _unitOfWork.Articles.DeleteAsync(id);
             await _unitOfWork.Save();
-            return "Article deleted";
+            return Resource.Resource.DELETE_SUCCESS;
         }
 
         public async Task<object> GetArticle(int id)
@@ -66,15 +68,16 @@ namespace Articles.Services.DataHandling
 
         public async Task<string> UpdateArticle(int id, Update_ArticleDTO articleDTO)
         {
-            var article = await _unitOfWork.Articles.GetAsync(pt => pt.Id == id);
+            var article = await _unitOfWork.Articles.GetAsync(q => q.Id == id);
             if (article == null)
             {
-                return "Article not found";
+                _logger.LogError($"Invalid UPDATE attempt in {nameof(UpdateArticle)}");
+                throw new BusinessException(Resource.Resource.NOT_DATA);
             }
             _mapper.Map(articleDTO, article);
             _unitOfWork.Articles.Update(article);
             await _unitOfWork.Save();
-            return "Article updated successfully";
+            return Resource.Resource.UPDATE_SUCCESS;
         }
     }
 }

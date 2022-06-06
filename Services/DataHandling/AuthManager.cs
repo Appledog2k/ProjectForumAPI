@@ -43,25 +43,30 @@ namespace Articles.Services.DataHandling
             var user = _mapper.Map<ApiUser>(userDTO);
             user.UserName = userDTO.Email;
             var result = await _userManager.CreateAsync(user, userDTO.Password);
-
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                var confirmEmailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var encodedEmailToken = Encoding.UTF8.GetBytes(confirmEmailToken);
-                var validEmailToken = WebEncoders.Base64UrlEncode(encodedEmailToken);
-
-                string url = $"{_configuration["AppUrl"]}/api/account/confirmemail?userid={user.Id}&token={validEmailToken}";
-
-                var mailContent = new MailContent();
-                mailContent.To = userDTO.Email;
-                mailContent.Subject = "Sign In Articles Page";
-                mailContent.Body = $"<p>Please click the link to confirm your email: <a href='{url}'>Click here</a></p>";
-                await _sendMailService.SendGMailAsync(mailContent);
-                await _userManager.AddToRolesAsync(user, userDTO.Roles);
-
-                return true;
+                List<string> error = new List<string>();
+                foreach (var e in result.Errors)
+                {
+                    error.Add(e.Description);
+                }
+                throw new BusinessException(error[0]);
             }
-            return false;
+
+            var confirmEmailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var encodedEmailToken = Encoding.UTF8.GetBytes(confirmEmailToken);
+            var validEmailToken = WebEncoders.Base64UrlEncode(encodedEmailToken);
+
+            string url = $"{_configuration["AppUrl"]}/api/account/confirmemail?userid={user.Id}&token={validEmailToken}";
+
+            var mailContent = new MailContent();
+            mailContent.To = userDTO.Email;
+            mailContent.Subject = "Sign In Articles Page";
+            mailContent.Body = $"<p>Please click the link to confirm your email: <a href='{url}'>Click here</a></p>";
+            await _sendMailService.SendGMailAsync(mailContent);
+            await _userManager.AddToRolesAsync(user, userDTO.Roles);
+
+            return true;
 
         }
 
@@ -71,37 +76,12 @@ namespace Articles.Services.DataHandling
         {
             _user = await _userManager.FindByEmailAsync(loginUserDTO.Email);
             var validPassword = await _userManager.CheckPasswordAsync(_user, loginUserDTO.Password);
-            // claim ownership
-            var authClaims = new List<Claim>
-            {
-                new Claim("Email", loginUserDTO.Email),
-                new Claim(ClaimTypes.NameIdentifier, _user.Id),
-            };
-            //coding for JWT
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-            // create token 
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddDays(1), // deadline for token
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
 
-                );
-
-            string tokenAsString = new JwtSecurityTokenHandler().WriteToken(token);
-            var mailContent = new MailContent();
-
-            mailContent.To = loginUserDTO.Email;
-            mailContent.Subject = "Sign In Articles Page";
-            mailContent.Body = "<h1>Hey!, new login to your account noticed</h1><p>New login to your account at " + DateTime.Now + "</p>";
-            await _sendMailService.SendGMailAsync(mailContent);
             if (_user != null && validPassword)
             {
-                return tokenAsString;
+                return await CreateTokenAsync();
             }
             throw new BusinessException(Resource.Resource.LOGIN_FAIL);
-
         }
 
         // TODO:: LogoutAsync
@@ -109,7 +89,6 @@ namespace Articles.Services.DataHandling
         {
             var identity = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
 
-            //Gets list of claims.
             IEnumerable<Claim> claims = identity.Claims;
 
             var usernameClaim = claims
@@ -125,19 +104,61 @@ namespace Articles.Services.DataHandling
             throw new BusinessException(Resource.Resource.LOGOUT_FAIL);
         }
 
+        // TODO: CreateTokenAsync
+        public async Task<string> CreateTokenAsync()
+        {
+            var signingCredentials = GetSigningCredentials();
+            var claims = await GetClaims();
+            var token = GenerateTokenOptions(signingCredentials, claims);
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+        private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
+        {
+            var jwtSettings = _configuration.GetSection("Jwt");
+            var expiration = DateTime.Now.AddMinutes(Convert.ToDouble(
+                jwtSettings.GetSection("lifetime").Value));
+
+            var token = new JwtSecurityToken(
+                issuer: jwtSettings.GetSection("Issuer").Value,
+                claims: claims,
+                expires: expiration,
+                signingCredentials: signingCredentials
+                );
+
+            return token;
+        }
+
+        private async Task<List<Claim>> GetClaims()
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, _user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, _user.Id),
+            };
+            var roles = await _userManager.GetRolesAsync(_user);
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+            return claims;
+        }
+
+        private SigningCredentials GetSigningCredentials()
+        {
+            var key = _configuration.GetSection("Jwt").GetSection("Key").Value;
+            var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+
+            return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+        }
+
 
         // TODO: Confirm Email --- done
-        public async Task<string> ConfirmEmailAsync(string userId, string token)
+        public async Task<string> ConfirmEmailAsync(Guid userId, string key)
         {
             List<string> error = new List<string>();
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-
-            }
-            var decodedToken = WebEncoders.Base64UrlDecode(token);
-            string normalToken = Encoding.UTF8.GetString(decodedToken);
-            var result = await _userManager.ConfirmEmailAsync(user, normalToken);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(key));
+            var result = await _userManager.ConfirmEmailAsync(user, code);
             if (result.Succeeded)
             {
                 return Resource.Resource.CONFIRMED_SUCCESS;
@@ -150,7 +171,6 @@ namespace Articles.Services.DataHandling
                 }
                 throw new BusinessException(error[0]);
             }
-
         }
 
 
@@ -172,9 +192,9 @@ namespace Articles.Services.DataHandling
             mailContent.Subject = "Sign In Articles Page";
             mailContent.Body = "<h1>Follow the instructions to reset your password</h1>" + $"<p>Please click the link to reset your password: <a href='{url}'>Click here</a></p>";
             await _sendMailService.SendGMailAsync(mailContent);
-            return Resource.Resource.FORGET_PASSWORD_SUCCESS;
+            throw new BusinessException(Resource.Resource.FORGET_PASSWORD_SUCCESS);
         }
-        // TODO: Reset Password --- done
+        // TODO: Reset Password --- done    
 
         public async Task<string> ResetPasswordAsync(ResetPasswordDTO resetPasswordDTO)
         {
@@ -199,5 +219,7 @@ namespace Articles.Services.DataHandling
             }
             return Resource.Resource.RESET_PASSWORD_FAIL;
         }
+
+
     }
 }

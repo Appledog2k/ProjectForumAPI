@@ -33,23 +33,22 @@ namespace Project_Articles.Controllers
 
         [HttpPost]
         [Authorize]
-
         public async Task<IActionResult> CreateAuthor([FromBody] Create_AuthorDTO authorDTO)
         {
             var result = await _authorRepository.CreateAuthor(authorDTO);
             return Ok(new Response(Resource.CREATE_SUCCESS, null, result));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         [Authorize]
-        public async Task<IActionResult> UpdateAuthor(int id, [FromBody] Create_AuthorDTO authorDTO)
+        public async Task<IActionResult> UpdateAuthor(int id, [FromBody] Update_AuthorDTO authorDTO)
         {
             var result = await _authorRepository.UpdateAuthor(id, authorDTO);
             return Ok(new Response(result));
         }
 
-        [HttpDelete("{id}")]
         [Authorize]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
             var result = await _authorRepository.DeleteAuthor(id);

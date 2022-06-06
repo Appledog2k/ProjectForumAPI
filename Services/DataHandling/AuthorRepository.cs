@@ -1,5 +1,6 @@
 using Articles.Data;
 using Articles.GenericRepository.IRepository;
+using Articles.Models;
 using Articles.Models.DTOs;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,9 @@ namespace Articles.Services.DataHandling
         private readonly ILogger<AuthorController> _logger;
         private readonly IMapper _mapper;
 
-        public AuthorRepository(IUnitOfWork unitOfWork, ILogger<AuthorController> logger, IMapper mapper)
+        public AuthorRepository(IUnitOfWork unitOfWork,
+                                ILogger<AuthorController> logger,
+                                IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -36,12 +39,12 @@ namespace Articles.Services.DataHandling
             var author = await _unitOfWork.Authors.GetAsync(q => q.Id == id);
             if (author == null || id < 1)
             {
-                return "Author not found";
+                _logger.LogError($"Invalid DELETE attempt in {nameof(DeleteAuthor)}");
+                throw new BusinessException(Resource.Resource.NOT_DATA);
             }
-
             await _unitOfWork.Authors.DeleteAsync(id);
             await _unitOfWork.Save();
-            return "Author deleted";
+            return Resource.Resource.DELETE_SUCCESS;
         }
 
         public async Task<object> GetAuthor(int id)
@@ -69,13 +72,13 @@ namespace Articles.Services.DataHandling
             var author = await _unitOfWork.Authors.GetAsync(q => q.Id == id);
             if (author == null)
             {
-                return "Author not found";
+                throw new BusinessException(Resource.Resource.NOT_DATA);
             }
 
             _mapper.Map(authorDTO, author);
             _unitOfWork.Authors.Update(author);
             await _unitOfWork.Save();
-            return "Author updated";
+            return Resource.Resource.UPDATE_SUCCESS;
         }
     }
 }

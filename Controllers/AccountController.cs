@@ -23,9 +23,6 @@ namespace Articles.Controllers
         // TODO: register
         [HttpPost]
         [Route("/register")]
-        [ProducesResponseType(StatusCodes.Status202Accepted)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
         {
             var result = await _authManager.RegisterAsync(userDTO);
@@ -42,7 +39,7 @@ namespace Articles.Controllers
             return Ok(new Response(Resource.LOGIN_SUCCESS, null, new { Token = result }));
         }
 
-        [HttpGet("logout")]
+        [HttpGet("/logout")]
         public async Task<IActionResult> Logout()
         {
             var result = await _authManager.LogoutAsync();
@@ -52,27 +49,27 @@ namespace Articles.Controllers
 
 
         // todo : confirmEmail
-        [HttpGet("confirmemail")]
-        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        [HttpGet("/confirmemail")]
+        public async Task<IActionResult> ConfirmEmail(Guid userId, string token)
         {
             var result = await _authManager.ConfirmEmailAsync(userId, token);
             return Redirect($"{_configuration["AppUrl"]}/confirmemail.html");
         }
 
         // todo : forgetPassword
-        [HttpPost("ForgetPassword")]
+        [HttpPost("/ForgetPassword")]
         public async Task<IActionResult> ForgotPassword(string email)
         {
             var result = await _authManager.ForgetPasswordAsync(email);
-            return Ok(result);
+            return Ok(new Response(result));
         }
 
         // todo : reset password
-        [HttpPost("ResetPassword")]
+        [HttpPost("/ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromForm] ResetPasswordDTO resetPasswordDTO)
         {
             var result = await _authManager.ResetPasswordAsync(resetPasswordDTO);
-            return Ok(result);
+            return Ok(new Response(result));
         }
 
     }
