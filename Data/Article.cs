@@ -7,6 +7,8 @@ namespace Articles.Data
         public string Title { get; set; }
         public DateTime Created { get; set; }
         public string Content { get; set; }
+
+        // todo : Author
         public int AuthorId { get; set; }
         public Author Author { get; set; }
     }

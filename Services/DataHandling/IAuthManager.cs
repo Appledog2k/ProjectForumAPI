@@ -5,12 +5,13 @@ namespace Articles.Services.DataHandling
 {
     public interface IAuthManager
     {
-        Task<AccountManagerResponse> SignUpAsync(UserDTO userDTO);
-        Task<AccountManagerResponse> LoginAsync(LoginUserDTO loginUserDTO);
+        Task<bool> RegisterAsync(UserDTO userDTO);
+        Task<string> LoginAsync(LoginUserDTO loginUserDTO);
+        Task<string> LogoutAsync();
 
-        Task<AccountManagerResponse> ConfirmEmailAsync(string userId, string token);
-        Task<AccountManagerResponse> ForgetPasswordAsync(string email);
-        Task<AccountManagerResponse> ResetPasswordAsync(ResetPasswordDTO resetPasswordDTO);
+        Task<string> ConfirmEmailAsync(string userId, string token);
+        Task<string> ForgetPasswordAsync(string email);
+        Task<string> ResetPasswordAsync(ResetPasswordDTO resetPasswordDTO);
 
     }
 }

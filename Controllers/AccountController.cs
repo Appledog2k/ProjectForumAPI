@@ -1,8 +1,6 @@
-using Articles.Models;
 using Articles.Models.DTOs;
 using Articles.Models.Response;
 using Articles.Services.DataHandling;
-using Articles.Services.Mail;
 using Articles.Services.Resource;
 using Microsoft.AspNetCore.Mvc;
 namespace Articles.Controllers
@@ -20,22 +18,38 @@ namespace Articles.Controllers
             _configuration = configuration;
         }
 
-        // todo : login
-        [HttpPost("/login")]
+
+
+        // TODO: register
+        [HttpPost]
+        [Route("/register")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
+        {
+            var result = await _authManager.RegisterAsync(userDTO);
+            return Ok(new Response(Resource.REGISTER_SUCCESS));
+
+        }
+
+        // TODO: login
+        [HttpPost]
+        [Route("/login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDTO loginUserDTO)
         {
             var result = await _authManager.LoginAsync(loginUserDTO);
             return Ok(new Response(Resource.LOGIN_SUCCESS, null, new { Token = result }));
         }
 
-        // todo : register
-        [HttpPost("/register")]
-        public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
         {
-            var result = await _authManager.SignUpAsync(userDTO);
-            return Ok(new Response(Resource.REGISTER_SUCCESS));
-
+            var result = await _authManager.LogoutAsync();
+            return Ok(new Response(result));
         }
+
+
 
         // todo : confirmEmail
         [HttpGet("confirmemail")]

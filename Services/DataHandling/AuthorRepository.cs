@@ -64,7 +64,7 @@ namespace Articles.Services.DataHandling
             };
         }
 
-        public async Task<string> UpdateAuthor(int id, Create_AuthorDTO authorDTO)
+        public async Task<string> UpdateAuthor(int id, Update_AuthorDTO authorDTO)
         {
             var author = await _unitOfWork.Authors.GetAsync(q => q.Id == id);
             if (author == null)

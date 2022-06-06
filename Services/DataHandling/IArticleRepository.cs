@@ -7,7 +7,7 @@ namespace Articles.Services.DataHandling
         Task<object> GetArticles();
         Task<object> GetArticle(int id);
         Task<object> CreateArticle(Create_ArticleDTO articleDTO);
-        Task<string> UpdateArticle(int id, Create_ArticleDTO articleDTO);
+        Task<string> UpdateArticle(int id, Update_ArticleDTO articleDTO);
         Task<string> DeleteArticle(int id);
     }
 }

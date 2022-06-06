@@ -16,7 +16,7 @@ namespace Articles.GenericRepository.Repository
             _dbSet = _context.Set<T>();
         }
 
-        // todo : get article
+        // todo : Get All
         public async Task<IList<T>> GetAllAsync(
         Expression<Func<T, bool>> expression = null,
         Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,

@@ -8,9 +8,9 @@ namespace Articles.Models.DTOs
     }
     public class UserDTO : LoginUserDTO
     {
+        public string ConfirmPassword { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string ConfirmPassword { get; set; }
         public ICollection<string> Roles { get; set; }
     }
 
