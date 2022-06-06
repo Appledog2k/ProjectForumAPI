@@ -9,7 +9,8 @@ namespace Articles.Services.DataHandling
         Task<string> LoginAsync(LoginUserDTO loginUserDTO);
         Task<string> LogoutAsync();
 
-        Task<string> ConfirmEmailAsync(string userId, string token);
+        Task<string> CreateTokenAsync();
+        Task<string> ConfirmEmailAsync(Guid userId, string key);
         Task<string> ForgetPasswordAsync(string email);
         Task<string> ResetPasswordAsync(ResetPasswordDTO resetPasswordDTO);
 

@@ -17,6 +17,7 @@ namespace Project_Articles.Controllers
             _articleRepository = articleRepository;
         }
 
+        // todo : get articles
         [HttpGet]
         public async Task<IActionResult> GetArticles()
         {
@@ -24,6 +25,7 @@ namespace Project_Articles.Controllers
             return Ok(new Response(Resource.GET_SUCCESS, articles));
         }
 
+        // todo : get article by id
         [Authorize]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetArticle(int id)
@@ -34,21 +36,24 @@ namespace Project_Articles.Controllers
 
         [HttpPost]
         [Authorize]
+
         public async Task<IActionResult> CreateArticle([FromBody] Create_ArticleDTO articleDTO)
         {
             var result = await _articleRepository.CreateArticle(articleDTO);
             return Ok(new Response(Resource.CREATE_SUCCESS, null, result));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         [Authorize]
-        public async Task<IActionResult> UpdateArticle(int id, [FromBody] Create_ArticleDTO articleDTO)
+
+        public async Task<IActionResult> UpdateArticle(int id, [FromBody] Update_ArticleDTO articleDTO)
         {
             var result = await _articleRepository.UpdateArticle(id, articleDTO);
             return Ok(new Response(result));
         }
 
-        [HttpDelete("{id}")]
+
+        [HttpDelete("{id:int}")]
         [Authorize]
         public async Task<IActionResult> DeleteArticle(int id)
         {

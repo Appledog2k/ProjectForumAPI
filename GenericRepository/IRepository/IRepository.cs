@@ -6,15 +6,15 @@ namespace Articles.GenericRepository.IRepository
     {
         // todo : Get All
         Task<IList<T>> GetAllAsync(
-            Expression<Func<T, bool>> expression = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null
+            Expression<Func<T, bool>>? expression = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null
         );
 
         // todo : Get
         Task<T> GetAsync(
         Expression<Func<T, bool>> expression,
-        Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null
         );
 
         // todo : Insert

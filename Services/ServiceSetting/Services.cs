@@ -30,25 +30,24 @@ namespace Articles.Services.ServiceSetting
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration Configuration)
         {
+            var jwtSettings = Configuration.GetSection("Jwt");
+            var key = jwtSettings.GetSection("Key").Value;
+
             services.AddAuthentication(option =>
           {
               option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
               option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-              option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
           })
               .AddJwtBearer(option =>
               {
-                  option.SaveToken = true;
-                  option.RequireHttpsMetadata = false;
-                  option.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                  option.TokenValidationParameters = new TokenValidationParameters()
                   {
                       ValidateIssuer = true,
-                      ValidateAudience = true,
-                      ValidAudience = Configuration["JWT:ValidAudience"],
-                      ValidIssuer = Configuration["JWT:ValidIssuer"],
-                      RequireExpirationTime = true, //time deadline
-                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"])),// create symmetric key
-                      ValidateIssuerSigningKey = true
+                      ValidateAudience = false,
+                      ValidateLifetime = true,
+                      ValidateIssuerSigningKey = true,
+                      ValidIssuer = jwtSettings.GetSection("Issuer").Value,
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
                   };
               });
         }
@@ -70,7 +69,7 @@ namespace Articles.Services.ServiceSetting
                             await context.Response.WriteAsync(new Error
                             {
                                 StatusCode = context.Response.StatusCode,
-                                Message = "Internal Server Error. Please Try Again Later.",
+                                Message = contextFeature.Error.Message
                             }.ToString());
                         }
                     });

@@ -18,9 +18,9 @@ namespace Articles.GenericRepository.Repository
 
         // todo : Get All
         public async Task<IList<T>> GetAllAsync(
-        Expression<Func<T, bool>> expression = null,
-        Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-        Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
+        Expression<Func<T, bool>>? expression = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null)
         {
             IQueryable<T> query = _dbSet;
 
@@ -45,7 +45,7 @@ namespace Articles.GenericRepository.Repository
         // todo : get article
         public async Task<T> GetAsync(
         Expression<Func<T, bool>> expression,
-        Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null)
         {
             IQueryable<T> query = _dbSet;
             if (include != null)

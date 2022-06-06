@@ -1,5 +1,8 @@
 using Articles.Services.Mail;
 using Articles.Services.ServiceSetting;
+using FluentValidation.AspNetCore;
+using Microsoft.OpenApi.Models;
+
 namespace Articles
 {
     public class Startup
@@ -29,10 +32,10 @@ namespace Articles
             services.AddAutoMapper(typeof(Startup));
 
             // todo : add Controller + Json
-            services.AddControllersWithViews().AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            });
+            services.AddControllers().AddNewtonsoftJson(op =>
+            op.SerializerSettings.ReferenceLoopHandling =
+            Newtonsoft.Json.ReferenceLoopHandling.Ignore)
+            .AddFluentValidation();
 
             // todo : ConnectString
             services.ConfigureConnectString();
@@ -47,7 +50,17 @@ namespace Articles
             services.ConfigureIdentityOptions();
 
             // todo : Configure Swagger
-            services.ConfigureSwagger();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Article", Version = "v1" });
+            });
+
+            // todo : Configure FluentValidation
+            services.ConfigureValidation();
+
+
+
+
         }
 
         //* This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,17 +69,13 @@ namespace Articles
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-
-                app.UseSwagger();
-
-                app.UseSwaggerUI();
             }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
 
-                app.UseHsts();
-            }
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Article v1"));
+
+            app.UseHttpsRedirection();
+
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
