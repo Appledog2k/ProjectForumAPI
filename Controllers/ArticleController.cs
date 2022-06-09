@@ -9,6 +9,7 @@ namespace Project_Articles.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ArticleController : ControllerBase
     {
         private readonly IArticleRepository _articleRepository;
@@ -26,7 +27,6 @@ namespace Project_Articles.Controllers
         }
 
         // todo : get article by id
-        [Authorize]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetArticle(int id)
         {
@@ -35,8 +35,6 @@ namespace Project_Articles.Controllers
         }
 
         [HttpPost]
-        [Authorize]
-
         public async Task<IActionResult> CreateArticle([FromBody] Create_ArticleDTO articleDTO)
         {
             var result = await _articleRepository.CreateArticle(articleDTO);
@@ -44,8 +42,6 @@ namespace Project_Articles.Controllers
         }
 
         [HttpPut]
-        [Authorize]
-
         public async Task<IActionResult> UpdateArticle(int id, [FromBody] Update_ArticleDTO articleDTO)
         {
             var result = await _articleRepository.UpdateArticle(id, articleDTO);
@@ -54,7 +50,6 @@ namespace Project_Articles.Controllers
 
 
         [HttpDelete("{id:int}")]
-        [Authorize]
         public async Task<IActionResult> DeleteArticle(int id)
         {
             var result = await _articleRepository.DeleteArticle(id);

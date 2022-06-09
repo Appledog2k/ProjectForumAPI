@@ -178,16 +178,10 @@
   </data>
   <data name="RESET_PASSWORD_SUCCESS" xml:space="preserve">
     <value>Thay đổi mật khẩu thành công.</value>
-  </data>
-  <data name="UPDATE_FAIL" xml:space="preserve">
-    <value>Sửa thất bại.</value>
-  </data>
+  </data>&lt;/data&gt;
   <data name="UPDATE_SUCCESS" xml:space="preserve">
     <value>Sửa thành công.</value>
-  </data>
-  <data name="VALIDATION_COMPARE" xml:space="preserve">
-    <value>{0} phải giống nhau.</value>
-  </data>
+  </data>&lt;/data&gt;
   <data name="VALIDATION_DISPLAY" xml:space="preserve">
     <value>{0} không đúng định dạng</value>
   </data>
@@ -199,5 +193,17 @@
   </data>
   <data name="VALIDATION_NOT_EMPTY" xml:space="preserve">
     <value>{0} không được để trống.</value>
+  </data>
+  <data name="DISCONNECTED_SUCCESS" xml:space="preserve">
+    <value>Đã ngắt kết nối.</value>
+  </data>
+  <data name="ERROR_CONNECT" xml:space="preserve">
+    <value>Lỗi kết nối.</value>
+  </data>
+  <data name="TITLE_MAIL" xml:space="preserve">
+    <value>Xác thực tài khoản</value>
+  </data>
+  <data name="CONTENT_MAIL" xml:space="preserve">
+    <value>Xác thực email</value>
   </data>
 </root>
