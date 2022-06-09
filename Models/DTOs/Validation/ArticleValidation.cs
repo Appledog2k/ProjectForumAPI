@@ -2,7 +2,7 @@ using Articles.Models.DTOs;
 using Articles.Services.Resource;
 using FluentValidation;
 
-namespace Articles.Models.Validation
+namespace Articles.Models.DTOs.Validation
 {
     public class ArticleValidation : AbstractValidator<Create_ArticleDTO>
     {

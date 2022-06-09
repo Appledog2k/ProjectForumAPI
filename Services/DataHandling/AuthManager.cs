@@ -61,8 +61,8 @@ namespace Articles.Services.DataHandling
 
             var mailContent = new MailContent();
             mailContent.To = userDTO.Email;
-            mailContent.Subject = "Sign In Articles Page";
-            mailContent.Body = $"<p>Please click the link to confirm your email: <a href='{url}'>Click here</a></p>";
+            mailContent.Subject = Resource.Resource.TITLE_MAIL;
+            mailContent.Body = $"<p>{Resource.Resource.CONTENT_MAIL} <a href='{url}'>Click here</a></p>";
             await _sendMailService.SendGMailAsync(mailContent);
             await _userManager.AddToRolesAsync(user, userDTO.Roles);
 

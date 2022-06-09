@@ -45,12 +45,12 @@ namespace Articles.Services.Mail
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                return "errors" + e.Message;
+                return Resource.Resource.ERROR_CONNECT + e.Message;
             }
 
             //* finish disconnect
             smtp.Disconnect(true);
-            return "success";
+            return Resource.Resource.DISCONNECTED_SUCCESS;
         }
     }
 }
