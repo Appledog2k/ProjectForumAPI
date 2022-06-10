@@ -19,6 +19,7 @@ namespace Project_Articles.Controllers
         }
 
         // todo : get articles
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetArticles()
         {
@@ -28,6 +29,7 @@ namespace Project_Articles.Controllers
 
         // todo : get article by id
         [HttpGet("{id:int}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetArticle(int id)
         {
             var article = await _articleRepository.GetArticle(id);

@@ -37,7 +37,7 @@ namespace Articles.Services.DataHandling
             _mapper = mapper;
         }
 
-        //  TODO: Sign Up --- done
+        //  TODO: Register --- done
         public async Task<bool> RegisterAsync(UserDTO userDTO)
         {
             var user = _mapper.Map<ApiUser>(userDTO);
@@ -64,6 +64,7 @@ namespace Articles.Services.DataHandling
             mailContent.Subject = Resource.Resource.TITLE_MAIL;
             mailContent.Body = $"<p>{Resource.Resource.CONTENT_MAIL} <a href='{url}'>Click here</a></p>";
             await _sendMailService.SendGMailAsync(mailContent);
+
             await _userManager.AddToRolesAsync(user, userDTO.Roles);
 
             return true;
