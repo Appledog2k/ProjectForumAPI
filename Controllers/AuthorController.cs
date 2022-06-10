@@ -19,6 +19,7 @@ namespace Project_Articles.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAuthors()
         {
             var authors = await _authorRepository.GetAuthors();
@@ -26,6 +27,7 @@ namespace Project_Articles.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAuthor(int id)
         {
             var author = await _authorRepository.GetAuthor(id);
