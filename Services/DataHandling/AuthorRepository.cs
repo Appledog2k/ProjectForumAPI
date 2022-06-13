@@ -1,5 +1,5 @@
 using Articles.Data;
-using Articles.GenericRepository.IRepository;
+using Articles.GenericRepository;
 using Articles.Models;
 using Articles.Models.DTOs;
 using AutoMapper;
@@ -8,6 +8,14 @@ using Project_Articles.Controllers;
 
 namespace Articles.Services.DataHandling
 {
+    public interface IAuthorRepository
+    {
+        Task<object> GetAuthors();
+        Task<object> GetAuthor(int id);
+        Task<object> CreateAuthor(Create_AuthorDTO authorDTO);
+        Task<string> UpdateAuthor(int id, Update_AuthorDTO authorDTO);
+        Task<string> DeleteAuthor(int id);
+    }
     public class AuthorRepository : IAuthorRepository
     {
         private readonly IUnitOfWork _unitOfWork;

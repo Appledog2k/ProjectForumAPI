@@ -6,6 +6,10 @@ using MimeKit;
 
 namespace Articles.Services.Mail
 {
+    public interface ISendMailService
+    {
+        Task<string> SendGMailAsync(MailContent mailContent);
+    }
     public class SendMailService : ISendMailService
     {
         private readonly MailSettings _mailSettings;

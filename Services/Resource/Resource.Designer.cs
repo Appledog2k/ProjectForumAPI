@@ -200,5 +200,29 @@ namespace Articles.Services.Resource
                 return ResourceManager.GetString("CONTENT_MAIL", resourceCulture);
             }
         }
+
+        public static string NOT_TOKEN
+        {
+            get
+            {
+                return ResourceManager.GetString("NOT_TOKEN", resourceCulture);
+            }
+        }
+
+        public static string NOT_ACCOUNT
+        {
+            get
+            {
+                return ResourceManager.GetString("NOT_ACCOUNT", resourceCulture);
+            }
+        }
+
+        public static string PASSWORD_NOT_MATCH
+        {
+            get
+            {
+                return ResourceManager.GetString("PASSWORD_NOT_MATCH", resourceCulture);
+            }
+        }
     }
 }
