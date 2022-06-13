@@ -206,4 +206,13 @@
   <data name="CONTENT_MAIL" xml:space="preserve">
     <value>Xác thực email</value>
   </data>
+  <data name="NOT_TOKEN" xml:space="preserve">
+    <value>Không tìm thấy token</value>
+  </data>
+  <data name="NOT_ACCOUNT" xml:space="preserve">
+    <value>Tài khoản không tồn tại</value>
+  </data>
+  <data name="PASSWORD_NOT_MATCH" xml:space="preserve">
+    <value>Mật khẩu không khớp</value>
+  </data>
 </root>

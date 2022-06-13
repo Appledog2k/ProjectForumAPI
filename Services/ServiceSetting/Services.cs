@@ -1,7 +1,6 @@
 using System.Text;
 using Articles.Data;
-using Articles.GenericRepository.IRepository;
-using Articles.GenericRepository.Repository;
+using Articles.GenericRepository;
 using Articles.Models.DTOs;
 using Articles.Models.DTOs.Validation;
 using Articles.Models.Errors;

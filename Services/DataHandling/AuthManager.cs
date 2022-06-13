@@ -12,6 +12,18 @@ using Articles.Models;
 
 namespace Articles.Services.DataHandling
 {
+    public interface IAuthManager
+    {
+        Task<bool> RegisterAsync(UserDTO userDTO);
+        Task<string> LoginAsync(LoginUserDTO loginUserDTO);
+        Task<string> LogoutAsync();
+
+        Task<string> CreateTokenAsync();
+        Task<string> ConfirmEmailAsync(Guid userId, string key);
+        Task<string> ForgetPasswordAsync(string email);
+        Task<string> ResetPasswordAsync(ResetPasswordDTO resetPasswordDTO);
+
+    }
     public class AuthManager : IAuthManager
     {
         private ApiUser _user;
@@ -199,15 +211,18 @@ namespace Articles.Services.DataHandling
 
         public async Task<string> ResetPasswordAsync(ResetPasswordDTO resetPasswordDTO)
         {
+            if (resetPasswordDTO.Token == null)
+            {
+                return Resource.Resource.NOT_TOKEN;
+            }
             var user = await _userManager.FindByEmailAsync(resetPasswordDTO.Email);
             if (user == null)
             {
-                return Resource.Resource.RESET_PASSWORD_SUCCESS;
+                return Resource.Resource.NOT_ACCOUNT;
             }
-
             if (resetPasswordDTO.NewPassword != resetPasswordDTO.ConfirmPassword)
             {
-                return Resource.Resource.RESET_PASSWORD_FAIL;
+                return Resource.Resource.PASSWORD_NOT_MATCH;
             }
 
             var decodedToken = WebEncoders.Base64UrlDecode(resetPasswordDTO.Token);

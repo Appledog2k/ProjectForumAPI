@@ -1,7 +1,12 @@
 using Articles.Data;
-using Articles.GenericRepository.IRepository;
-namespace Articles.GenericRepository.Repository
+namespace Articles.GenericRepository
 {
+    public interface IUnitOfWork : IDisposable
+    {
+        IRepository<Article> Articles { get; }
+        IRepository<Author> Authors { get; }
+        Task Save();
+    }
     public class UnitOfWork : IUnitOfWork
     {
         private readonly DatabaseContext _context;
