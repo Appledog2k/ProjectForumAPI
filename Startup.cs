@@ -1,6 +1,8 @@
+using Articles.Data;
 using Articles.Services.Mail;
 using Articles.Services.ServiceSetting;
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 namespace Articles
@@ -20,9 +22,7 @@ namespace Articles
             services.AddRazorPages();
 
             // todo : Mail
-            services.AddOptions();
-            var mailsettings = Configuration.GetSection("MailSettings");
-            services.Configure<MailSettings>(mailsettings);
+            services.ConfigureEmailService(Configuration);
 
             // todo : Identity
             services.ConfigureIdentity();
@@ -38,7 +38,12 @@ namespace Articles
             .AddFluentValidation();
 
             // todo : ConnectString
-            services.ConfigureConnectString();
+
+            services.AddDbContext<DatabaseContext>(options =>
+                      {
+                          string connectString = Configuration.GetConnectionString("DatabaseContext");
+                          options.UseSqlServer(connectString);
+                      });
 
             // todo : JWT
             services.ConfigureJWT(Configuration);

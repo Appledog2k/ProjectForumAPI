@@ -9,6 +9,7 @@ using Articles.Data;
 using Articles.Services.Mail;
 using AutoMapper;
 using Articles.Models;
+using Articles.Models.Errors;
 
 namespace Articles.Services.DataHandling
 {
@@ -73,8 +74,8 @@ namespace Articles.Services.DataHandling
 
             var mailContent = new MailContent();
             mailContent.To = userDTO.Email;
-            mailContent.Subject = Resource.Resource.TITLE_MAIL;
-            mailContent.Body = $"<p>{Resource.Resource.CONTENT_MAIL} <a href='{url}'>Click here</a></p>";
+            mailContent.Subject = "test";
+            mailContent.Body = $"<p> test <a href='{url}'>Click here</a></p>";
             await _sendMailService.SendGMailAsync(mailContent);
 
             await _userManager.AddToRolesAsync(user, userDTO.Roles);
@@ -123,6 +124,7 @@ namespace Articles.Services.DataHandling
             var signingCredentials = GetSigningCredentials();
             var claims = await GetClaims();
             var token = GenerateTokenOptions(signingCredentials, claims);
+
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
@@ -158,7 +160,8 @@ namespace Articles.Services.DataHandling
 
         private SigningCredentials GetSigningCredentials()
         {
-            var key = _configuration.GetSection("Jwt").GetSection("Key").Value;
+            var jwtSettings = _configuration.GetSection("Jwt");
+            var key = jwtSettings.GetSection("Key").Value;
             var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
 
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
@@ -213,16 +216,16 @@ namespace Articles.Services.DataHandling
         {
             if (resetPasswordDTO.Token == null)
             {
-                return Resource.Resource.NOT_TOKEN;
+                throw new BusinessException(Resource.Resource.ERROR_400);
             }
             var user = await _userManager.FindByEmailAsync(resetPasswordDTO.Email);
             if (user == null)
             {
-                return Resource.Resource.NOT_ACCOUNT;
+                throw new BusinessException(Resource.Resource.ERROR_400);
             }
             if (resetPasswordDTO.NewPassword != resetPasswordDTO.ConfirmPassword)
             {
-                return Resource.Resource.PASSWORD_NOT_MATCH;
+                throw new BusinessException(Resource.Resource.ERROR_400);
             }
 
             var decodedToken = WebEncoders.Base64UrlDecode(resetPasswordDTO.Token);
