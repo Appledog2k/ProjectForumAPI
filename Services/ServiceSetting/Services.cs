@@ -83,15 +83,6 @@ namespace Articles.Services.ServiceSetting
             services.AddTransient<IValidator<Create_ArticleDTO>, ArticleValidation>();
         }
 
-        public static void ConfigureConnectString(this IServiceCollection services)
-        {
-            services.AddDbContext<DatabaseContext>(options =>
-                      {
-                          string connectString = Configuration.GetConnectionString("DatabaseContext");
-                          options.UseSqlServer(connectString);
-                      });
-        }
-
         public static void ConfigureServices(this IServiceCollection services)
         {
             services.AddTransient<IArticleRepository, ArticleRepository>();
@@ -99,7 +90,7 @@ namespace Articles.Services.ServiceSetting
             services.AddTransient<IAuthorRepository, AuthorRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
-            services.AddTransient<ISendMailService, SendMailService>();
+            // services.AddTransient<ISendMailService, SendMailService>();
         }
 
         public static void ConfigureIdentityOptions(this IServiceCollection services)
@@ -167,5 +158,14 @@ namespace Articles.Services.ServiceSetting
             });
             IMvcBuilder builder = services.AddRazorPages();
         }
+
+        public static void ConfigureEmailService(this IServiceCollection services, IConfiguration Configuration)
+        {
+            services.AddOptions();
+            var mailsettings = Configuration.GetSection("Mailsettings");
+            services.Configure<MailSettings>(mailsettings);
+            services.AddTransient<ISendMailService, SendMailService>();
+        }
+
     }
 }

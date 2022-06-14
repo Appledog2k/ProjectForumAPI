@@ -224,5 +224,13 @@ namespace Articles.Services.Resource
                 return ResourceManager.GetString("PASSWORD_NOT_MATCH", resourceCulture);
             }
         }
+
+        public static string ERROR_400
+        {
+            get
+            {
+                return ResourceManager.GetString("ERROR_400", resourceCulture);
+            }
+        }
     }
 }

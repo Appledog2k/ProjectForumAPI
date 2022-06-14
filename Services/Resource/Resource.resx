@@ -215,4 +215,7 @@
   <data name="PASSWORD_NOT_MATCH" xml:space="preserve">
     <value>Mật khẩu không khớp</value>
   </data>
+  <data name="ERROR_400" xml:space="preserve">
+    <value>400 Bad Request</value>
+  </data>
 </root>
