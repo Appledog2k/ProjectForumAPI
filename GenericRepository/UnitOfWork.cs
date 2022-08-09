@@ -16,7 +16,6 @@ namespace Articles.GenericRepository
         {
             _context = context;
         }
-
         public IRepository<Article> Articles => _articles ??= new Repository<Article>(_context);
         public IRepository<Author> Authors => _authors ??= new Repository<Author>(_context);
 

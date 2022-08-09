@@ -17,6 +17,13 @@ namespace Articles
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(o =>
+            {
+                o.AddPolicy("AllowAll", builder =>
+                    builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
 
             // todo : Add Razor pages
             services.AddRazorPages();
@@ -62,10 +69,6 @@ namespace Articles
 
             // todo : Configure FluentValidation
             services.ConfigureValidation();
-
-
-
-
         }
 
         //* This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -89,6 +92,8 @@ namespace Articles
 
             app.UseRouting();
 
+            app.UseCors("AllowAll");
+
             app.UseAuthentication();
 
             app.UseAuthorization();
@@ -101,3 +106,8 @@ namespace Articles
         }
     }
 }
+
+
+//"ConnectionStrings": {
+//  "DatabaseContext" : "Data Source=localhost,1433; Initial Catalog=Articledb; User ID=SA;Password=Password123"
+//},

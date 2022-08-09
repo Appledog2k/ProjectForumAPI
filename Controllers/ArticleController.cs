@@ -9,7 +9,7 @@ namespace Project_Articles.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+
     public class ArticleController : ControllerBase
     {
         private readonly IArticleRepository _articleRepository;
