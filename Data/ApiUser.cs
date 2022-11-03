@@ -5,5 +5,7 @@ namespace Articles.Data
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public DateTime Dob { get; set; }
+        public List<Article>? Articles { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 using Articles.Data;
 using Articles.Services.Mail;
 using Articles.Services.ServiceSetting;
+using Articles.Services.StorageService;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -57,6 +58,7 @@ namespace Articles
 
             // todo : services
             services.ConfigureServices();
+            services.AddTransient<IStorageService, StorageService>();
 
             // todo : Options Identity
             services.ConfigureIdentityOptions();

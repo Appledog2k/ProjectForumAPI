@@ -15,7 +15,7 @@ namespace Articles.Configuration.Entities
                     Title = "Đây là bài viết 1",
                     Created = new System.DateTime(2019, 1, 1),
                     Content = "Nội dung bài viết 1",
-                    AuthorId = 1
+                    ViewCount = 100,
                 },
 
                 new Article
@@ -24,7 +24,8 @@ namespace Articles.Configuration.Entities
                     Title = "Đây là bài viết 2",
                     Created = new System.DateTime(2019, 1, 1),
                     Content = "Content of article 2",
-                    AuthorId = 2
+                    ViewCount = 100,
+
                 },
 
                 new Article
@@ -33,12 +34,12 @@ namespace Articles.Configuration.Entities
                     Title = "Article 3",
                     Created = new System.DateTime(2019, 1, 1),
                     Content = "Content of article 3",
-                    AuthorId = 3
+                    ViewCount = 100,
                 }
             );
             // todo : Key
             builder.HasKey(options => options.Id);
-            builder.HasOne(options => options.Author).WithMany(options => options.Articles).HasForeignKey(options => options.AuthorId);
+            builder.HasOne(x => x.ApiUser).WithMany(x => x.Articles).HasForeignKey(x => x.UserId);
         }
     }
 }

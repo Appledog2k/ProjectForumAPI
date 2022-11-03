@@ -1,11 +1,14 @@
+using Articles.Data;
+
 namespace Articles.Models.DTOs
 {
     public class Create_ArticleDTO
     {
-        public string Title { get; set; }
-        public DateTime Created { get; set; }
-        public string Content { get; set; }
-        public int AuthorId { get; set; }
+        public string? Title { get; set; }
+        public string? Content { get; set; }
+        public int ViewCount { get; set; }
+        public IFormFile? ThumbnailImage { get; set; }
+
     }
 
     public class Update_ArticleDTO : Create_ArticleDTO
@@ -15,6 +18,7 @@ namespace Articles.Models.DTOs
     public class ArticleDTO : Create_ArticleDTO
     {
         public int Id { get; set; }
-        public AuthorDTO Author { get; set; }
+        public List<ImageArticle>? ImageArticles { get; set; }
+
     }
 }

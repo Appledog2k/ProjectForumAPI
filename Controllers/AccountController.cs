@@ -5,7 +5,7 @@ using Articles.Services.Resource;
 using Microsoft.AspNetCore.Mvc;
 namespace Articles.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("forum/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Articles.Migrations
 {
-    public partial class dbupdate : Migration
+    public partial class initdbase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -192,29 +192,33 @@ namespace Articles.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Authors",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "Author 1" });
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "6019ff25-09cd-485f-801b-be80932e0120", "d451bbbf-6fef-4909-9bfe-fba3646ba090", "Admin", "ADMIN" },
+                    { "bb800fa8-424d-4705-8d0a-2af973401cb4", "9d42c2ac-1d99-4ecc-b363-763be66bd168", "User", "USER" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Authors",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { 2, "Author 2" });
-
-            migrationBuilder.InsertData(
-                table: "Authors",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 3, "Author 3" });
+                values: new object[,]
+                {
+                    { 1, "Author 1" },
+                    { 2, "Author 2" },
+                    { 3, "Author 3" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Articles",
                 columns: new[] { "Id", "AuthorId", "Content", "Created", "Title" },
-                values: new object[] { 1, 1, "Content of article 1", new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Article 1" });
+                values: new object[] { 1, 1, "Nội dung bài viết 1", new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Đây là bài viết 1" });
 
             migrationBuilder.InsertData(
                 table: "Articles",
                 columns: new[] { "Id", "AuthorId", "Content", "Created", "Title" },
-                values: new object[] { 2, 2, "Content of article 2", new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Article 2" });
+                values: new object[] { 2, 2, "Content of article 2", new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Đây là bài viết 2" });
 
             migrationBuilder.InsertData(
                 table: "Articles",

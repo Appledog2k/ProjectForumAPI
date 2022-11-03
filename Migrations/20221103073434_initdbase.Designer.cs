@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Articles.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220809134143_newproject")]
-    partial class newproject
+    [Migration("20221103073434_initdbase")]
+    partial class initdbase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -215,15 +215,15 @@ namespace Articles.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "7f14ebf9-8114-4fc7-acc0-d40b7a27b254",
-                            ConcurrencyStamp = "feb40cb7-3890-4ce4-a480-995ebfd7948a",
+                            Id = "6019ff25-09cd-485f-801b-be80932e0120",
+                            ConcurrencyStamp = "d451bbbf-6fef-4909-9bfe-fba3646ba090",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "074b27cf-f69d-40ec-8b9f-c84d91a93a85",
-                            ConcurrencyStamp = "3f0dee7e-1baa-4142-9451-5b36d0021f21",
+                            Id = "bb800fa8-424d-4705-8d0a-2af973401cb4",
+                            ConcurrencyStamp = "9d42c2ac-1d99-4ecc-b363-763be66bd168",
                             Name = "User",
                             NormalizedName = "USER"
                         });

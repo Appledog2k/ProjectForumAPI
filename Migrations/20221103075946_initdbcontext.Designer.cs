@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Articles.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220524090914_addDefaultRole")]
-    partial class addDefaultRole
+    [Migration("20221103075946_initdbcontext")]
+    partial class initdbcontext
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,96 +24,7 @@ namespace Articles.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Articles.Data.Article", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.ToTable("Articles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AuthorId = 1,
-                            Content = "Content of article 1",
-                            Created = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Article 1"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AuthorId = 2,
-                            Content = "Content of article 2",
-                            Created = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Article 2"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AuthorId = 3,
-                            Content = "Content of article 3",
-                            Created = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Article 3"
-                        });
-                });
-
-            modelBuilder.Entity("Articles.Data.Author", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Authors");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Author 1"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Author 2"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Author 3"
-                        });
-                });
-
-            modelBuilder.Entity("Articles.Models.AppUser", b =>
+            modelBuilder.Entity("Articles.Data.ApiUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -124,6 +35,9 @@ namespace Articles.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Dob")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -186,6 +100,139 @@ namespace Articles.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Articles.Data.Article", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("ApiUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApiUserId");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("Articles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AuthorId = 1,
+                            Content = "Nội dung bài viết 1",
+                            Created = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Đây là bài viết 1",
+                            UserId = new Guid("00000000-0000-0000-0000-000000000000")
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AuthorId = 2,
+                            Content = "Content of article 2",
+                            Created = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Đây là bài viết 2",
+                            UserId = new Guid("00000000-0000-0000-0000-000000000000")
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AuthorId = 3,
+                            Content = "Content of article 3",
+                            Created = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Article 3",
+                            UserId = new Guid("00000000-0000-0000-0000-000000000000")
+                        });
+                });
+
+            modelBuilder.Entity("Articles.Data.Author", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Authors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Author 1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Author 2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Author 3"
+                        });
+                });
+
+            modelBuilder.Entity("Articles.Data.ImageArticle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ArticleId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Caption")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FileSize")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArticleId");
+
+                    b.ToTable("ImageArticles", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -215,15 +262,15 @@ namespace Articles.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "edd72114-6e11-4b1f-8756-3b4fdefcabe2",
-                            ConcurrencyStamp = "a02eca53-a631-45ec-a8b0-12dca4bc500b",
+                            Id = "97a5cc2e-5d07-454d-b389-c8a4dd6a4dfc",
+                            ConcurrencyStamp = "92a9ec5d-a4d3-406a-80a9-1e41e63d7f91",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "8196ca81-f7d4-4086-a6c2-d1cd3798a0b4",
-                            ConcurrencyStamp = "5f8034d6-8d06-46bc-b322-d3551d3dac24",
+                            Id = "0074a946-4167-4eda-a783-32b5edfc3ec8",
+                            ConcurrencyStamp = "d326f617-deb5-45d8-ad00-9cdc0f25eb5c",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -337,13 +384,30 @@ namespace Articles.Migrations
 
             modelBuilder.Entity("Articles.Data.Article", b =>
                 {
+                    b.HasOne("Articles.Data.ApiUser", "ApiUser")
+                        .WithMany("Articles")
+                        .HasForeignKey("ApiUserId");
+
                     b.HasOne("Articles.Data.Author", "Author")
                         .WithMany("Articles")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("ApiUser");
+
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("Articles.Data.ImageArticle", b =>
+                {
+                    b.HasOne("Articles.Data.Article", "Article")
+                        .WithMany("ImageArticles")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Article");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -357,7 +421,7 @@ namespace Articles.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Articles.Models.AppUser", null)
+                    b.HasOne("Articles.Data.ApiUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -366,7 +430,7 @@ namespace Articles.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Articles.Models.AppUser", null)
+                    b.HasOne("Articles.Data.ApiUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -381,7 +445,7 @@ namespace Articles.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Articles.Models.AppUser", null)
+                    b.HasOne("Articles.Data.ApiUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -390,11 +454,21 @@ namespace Articles.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Articles.Models.AppUser", null)
+                    b.HasOne("Articles.Data.ApiUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Articles.Data.ApiUser", b =>
+                {
+                    b.Navigation("Articles");
+                });
+
+            modelBuilder.Entity("Articles.Data.Article", b =>
+                {
+                    b.Navigation("ImageArticles");
                 });
 
             modelBuilder.Entity("Articles.Data.Author", b =>

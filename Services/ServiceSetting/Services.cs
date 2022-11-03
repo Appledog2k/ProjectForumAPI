@@ -79,7 +79,6 @@ namespace Articles.Services.ServiceSetting
         public static void ConfigureValidation(this IServiceCollection services)
         {
             services.AddTransient<IValidator<UserDTO>, UserValidation>();
-            services.AddTransient<IValidator<Create_AuthorDTO>, AuthorValidation>();
             services.AddTransient<IValidator<Create_ArticleDTO>, ArticleValidation>();
         }
 
@@ -87,7 +86,6 @@ namespace Articles.Services.ServiceSetting
         {
             services.AddTransient<IArticleRepository, ArticleRepository>();
             services.AddTransient<IAuthManager, AuthManager>();
-            services.AddTransient<IAuthorRepository, AuthorRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             // services.AddTransient<ISendMailService, SendMailService>();
