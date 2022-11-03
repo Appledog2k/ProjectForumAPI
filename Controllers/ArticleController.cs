@@ -1,17 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using Articles.Services.DataHandling;
 using Microsoft.AspNetCore.Authorization;
 using Articles.Models.DTOs;
 using Articles.Models.Response;
 using Articles.Services.Resource;
 using Articles.Models.DTOs.ArticleImage;
-using System.Security.Claims;
+using Articles.Services.ArticleRepositories;
 
 namespace Project_Articles.Controllers
 {
     [Route("forum/[controller]")]
     [ApiController]
-
     public class ArticleController : ControllerBase
     {
         private readonly IArticleRepository _articleRepository;
@@ -19,15 +17,7 @@ namespace Project_Articles.Controllers
         {
             _articleRepository = articleRepository;
         }
-        [HttpGet("/currentUser")]
-        public IActionResult GetCurrentUserAsync()
-        {
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return Ok(username);
-        }
 
-
-        // todo : get articles
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetArticles()
@@ -36,7 +26,6 @@ namespace Project_Articles.Controllers
             return Ok(new Response(Resource.GET_SUCCESS, articles));
         }
 
-        // todo : get article by id
         [HttpGet("{id:int}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetArticle(int id)
@@ -61,7 +50,6 @@ namespace Project_Articles.Controllers
             return Ok(new Response(result));
         }
 
-
         [HttpDelete("{id:int}")]
         [Authorize]
         public async Task<IActionResult> DeleteArticle(int id)
@@ -69,6 +57,7 @@ namespace Project_Articles.Controllers
             var result = await _articleRepository.DeleteArticle(id);
             return Ok(new Response(result));
         }
+
         [HttpPost("{articleId}/images")]
         public async Task<IActionResult> CreateImageArticle(int articleId, [FromForm] ArticleImageCreateRequest request)
         {
@@ -81,7 +70,7 @@ namespace Project_Articles.Controllers
             var image = await _articleRepository.GetImageById(imageId);
             return Ok(image.Caption);
         }
-        [HttpPut("{articleId}/images/{imageId}")]
+        [HttpPut("images/{imageId}")]
         public async Task<IActionResult> UpdateImageArticle(int imageId, [FromForm] ArticleImageUpdateRequest request)
         {
             var result = await _articleRepository.UpdateImage(imageId, request);
@@ -107,7 +96,5 @@ namespace Project_Articles.Controllers
             var image = await _articleRepository.GetImageById(articleId);
             return Ok(image);
         }
-
-
     }
 }

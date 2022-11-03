@@ -10,14 +10,11 @@ namespace Articles.Configuration.Entities
             builder.HasData(
                 new IdentityRole
                 {
-
                     Name = "Admin",
                     NormalizedName = "ADMIN"
                 },
-
                 new IdentityRole
                 {
-
                     Name = "User",
                     NormalizedName = "USER"
                 }

@@ -1,4 +1,4 @@
-using Articles.Data;
+using Articles.Models.Data.AggregateArticles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Articles.Configuration.Entities
@@ -8,33 +8,29 @@ namespace Articles.Configuration.Entities
         public void Configure(EntityTypeBuilder<Article> builder)
         {
             builder.HasData(
-
                 new Article
                 {
                     Id = 1,
-                    Title = "Đây là bài viết 1",
-                    Created = new System.DateTime(2019, 1, 1),
-                    Content = "Nội dung bài viết 1",
+                    Title = "Bài viết số 1",
+                    CreatedDate = new System.DateTime(2023, 1, 1),
+                    Content = "Nội dung bài viết  số 1",
                     ViewCount = 100,
                 },
-
                 new Article
                 {
                     Id = 2,
                     Title = "Đây là bài viết 2",
-                    Created = new System.DateTime(2019, 1, 1),
+                    CreatedDate = new System.DateTime(2023, 1, 1),
                     Content = "Content of article 2",
-                    ViewCount = 100,
-
+                    ViewCount = 200,
                 },
-
                 new Article
                 {
                     Id = 3,
-                    Title = "Article 3",
-                    Created = new System.DateTime(2019, 1, 1),
-                    Content = "Content of article 3",
-                    ViewCount = 100,
+                    Title = "Bài viết số 3",
+                    CreatedDate = new System.DateTime(2023, 1, 1),
+                    Content = "Nội dung bài viết số 3",
+                    ViewCount = 300,
                 }
             );
             // todo : Key

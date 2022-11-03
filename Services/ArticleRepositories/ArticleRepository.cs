@@ -1,32 +1,19 @@
 using System.Net.Http.Headers;
-using System.Security.Claims;
-using Articles.Data;
 using Articles.GenericRepository;
 using Articles.Models;
+using Articles.Models.Data.AggregateArticles;
+using Articles.Models.Data.AggregateImages;
+using Articles.Models.Data.DbContext;
 using Articles.Models.DTOs;
 using Articles.Models.DTOs.ArticleImage;
-using Articles.Services.StorageService;
+using Articles.Services.StorageServices;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project_Articles.Controllers;
 
-namespace Articles.Services.DataHandling
+namespace Articles.Services.ArticleRepositories
 {
-    public interface IArticleRepository
-    {
-        Task<object> GetArticles();
-        Task<object> GetArticle(int id);
-        Task<object> CreateArticle(Create_ArticleDTO articleDTO);
-        Task<string> UpdateArticle(int id, Update_ArticleDTO articleDTO);
-        Task<string> DeleteArticle(int id);
-        Task<int> AddImage(int articleId, ArticleImageCreateRequest articleImage);
-        Task<int> RemoveImage(int imageId);
-        Task<int> UpdateImage(int imageId, ArticleImageUpdateRequest articleImage);
-        Task<ArticleImageViewModel> GetImageById(int imageId);
-
-        Task<List<ArticleImageViewModel>> GetListImages(int productId);
-    }
     public class ArticleRepository : IArticleRepository
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -110,7 +97,7 @@ namespace Articles.Services.DataHandling
             var articleImage = new ImageArticle()
             {
                 Caption = image.Caption,
-                DateCreated = DateTime.Now,
+                CreatedDate = DateTime.Now,
                 ArticleId = articleId,
             };
 
@@ -132,7 +119,6 @@ namespace Articles.Services.DataHandling
             }
             _context.ImageArticles.Remove(articleImage);
             return await _context.SaveChangesAsync();
-
         }
         public async Task<int> UpdateImage(int imageId, ArticleImageUpdateRequest image)
         {
@@ -159,7 +145,7 @@ namespace Articles.Services.DataHandling
             var viewModel = new ArticleImageViewModel()
             {
                 Caption = image.Caption,
-                DateCreated = image.DateCreated,
+                DateCreated = image.CreatedDate,
                 Id = image.Id,
                 ImagePath = image.ImagePath,
             };
@@ -171,13 +157,11 @@ namespace Articles.Services.DataHandling
             return await _context.ImageArticles.Where(x => x.ArticleId == articleId).Select(x => new ArticleImageViewModel()
             {
                 Caption = x.Caption,
-                DateCreated = x.DateCreated,
+                DateCreated = x.CreatedDate,
                 Id = x.Id,
                 ImagePath = x.ImagePath,
             }).ToListAsync();
         }
-
-
         private async Task<string> SaveFile(IFormFile file)
         {
             var originalFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
@@ -185,7 +169,5 @@ namespace Articles.Services.DataHandling
             await _storageService.SaveFileAsync(file.OpenReadStream(), fileName);
             return fileName;
         }
-
-
     }
 }

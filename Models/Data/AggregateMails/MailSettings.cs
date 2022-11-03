@@ -1,4 +1,4 @@
-namespace Articles.Services.Mail
+namespace Articles.Models.Data.AggregateMails
 {
     public class MailSettings
     {

@@ -1,4 +1,4 @@
-namespace Articles.Services.StorageService
+namespace Articles.Services.StorageServices
 {
     public class StorageService : IStorageService
     {

@@ -1,4 +1,5 @@
 using Articles.Models;
+using Articles.Models.Data.AggregateMails;
 using Articles.Services.Mail;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
@@ -6,10 +7,6 @@ using MimeKit;
 
 namespace Articles.Services.Mail
 {
-    public interface ISendMailService
-    {
-        Task<string> SendGMailAsync(MailContent mailContent);
-    }
     public class SendMailService : ISendMailService
     {
         private readonly MailSettings _mailSettings;
@@ -17,7 +14,7 @@ namespace Articles.Services.Mail
         {
             _mailSettings = mailSettings.Value;
         }
-        public async Task<string> SendGMailAsync(MailContent mailContent)
+        public async Task<string> SendMailAsync(MailContent mailContent)
         {
             var email = new MimeMessage();
 

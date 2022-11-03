@@ -1,31 +1,19 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.WebUtilities;
+using Articles.Models;
+using Articles.Models.Data.AggregateMails;
+using Articles.Models.Data.AggregateUsers;
 using Articles.Models.DTOs;
-using Articles.Data;
 using Articles.Services.Mail;
 using AutoMapper;
-using Articles.Models;
-using Articles.Models.Errors;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.IdentityModel.Tokens;
 
-namespace Articles.Services.DataHandling
+namespace Articles.Services.UserRepositories
 {
-    public interface IAuthManager
-    {
-        Task<bool> RegisterAsync(UserDTO userDTO);
-        Task<string> LoginAsync(LoginUserDTO loginUserDTO);
-        Task<string> LogoutAsync();
-
-        Task<string> CreateTokenAsync();
-        Task<string> ConfirmEmailAsync(Guid userId, string key);
-        Task<string> ForgetPasswordAsync(string email);
-        Task<string> ResetPasswordAsync(ResetPasswordDTO resetPasswordDTO);
-
-    }
-    public class AuthManager : IAuthManager
+    public class UserRepository : IUserRepository
     {
         private ApiUser _user;
         private readonly UserManager<ApiUser> _userManager;
@@ -35,7 +23,7 @@ namespace Articles.Services.DataHandling
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
 
-        public AuthManager(UserManager<ApiUser> userManager,
+        public UserRepository(UserManager<ApiUser> userManager,
                            SignInManager<ApiUser> signInManager,
                            IConfiguration configuration,
                            ISendMailService sendMailService,
@@ -50,7 +38,6 @@ namespace Articles.Services.DataHandling
             _mapper = mapper;
         }
 
-        //  TODO: Register --- done
         public async Task<bool> RegisterAsync(UserDTO userDTO)
         {
             var user = _mapper.Map<ApiUser>(userDTO);
@@ -76,12 +63,9 @@ namespace Articles.Services.DataHandling
             mailContent.To = userDTO.Email;
             mailContent.Subject = "test";
             mailContent.Body = $"<p> test <a href='{url}'>Click here</a></p>";
-            await _sendMailService.SendGMailAsync(mailContent);
-
+            await _sendMailService.SendMailAsync(mailContent);
             await _userManager.AddToRolesAsync(user, userDTO.Roles);
-
             return true;
-
         }
 
         // TODO: Login --- done
@@ -139,7 +123,6 @@ namespace Articles.Services.DataHandling
                 expires: expiration,
                 signingCredentials: signingCredentials
                 );
-
             return token;
         }
 
@@ -207,7 +190,7 @@ namespace Articles.Services.DataHandling
             mailContent.To = email;
             mailContent.Subject = "Sign In Articles Page";
             mailContent.Body = "<h1>Follow the instructions to reset your password</h1>" + $"<p>Please click the link to reset your password: <a href='{url}'>Click here</a></p>";
-            await _sendMailService.SendGMailAsync(mailContent);
+            await _sendMailService.SendMailAsync(mailContent);
             throw new BusinessException(Resource.Resource.FORGET_PASSWORD_SUCCESS);
         }
         // TODO: Reset Password --- done    
@@ -241,4 +224,5 @@ namespace Articles.Services.DataHandling
 
 
     }
+
 }

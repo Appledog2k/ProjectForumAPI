@@ -1,10 +1,8 @@
-using Articles.Data;
-using Articles.Services.Mail;
+
+using Articles.Models.Data.DbContext;
 using Articles.Services.ServiceSetting;
-using Articles.Services.StorageService;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 
 namespace Articles
 {
@@ -15,37 +13,22 @@ namespace Articles
             Configuration = configuration;
         }
         public IConfiguration Configuration { get; }
-
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(o =>
-            {
-                o.AddPolicy("AllowAll", builder =>
-                    builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
-            });
+            services.ConfigureCors();
 
-            // todo : Add Razor pages
             services.AddRazorPages();
 
-            // todo : Mail
             services.ConfigureEmailService(Configuration);
 
-            // todo : Identity
             services.ConfigureIdentity();
-
-            // todo : add automapper
 
             services.AddAutoMapper(typeof(Startup));
 
-            // todo : add Controller + Json
             services.AddControllers().AddNewtonsoftJson(op =>
             op.SerializerSettings.ReferenceLoopHandling =
             Newtonsoft.Json.ReferenceLoopHandling.Ignore)
             .AddFluentValidation();
-
-            // todo : ConnectString
 
             services.AddDbContext<DatabaseContext>(options =>
                       {
@@ -53,23 +36,14 @@ namespace Articles
                           options.UseSqlServer(connectString);
                       });
 
-            // todo : JWT
             services.ConfigureJWT(Configuration);
 
-            // todo : services
             services.ConfigureServices();
-            services.AddTransient<IStorageService, StorageService>();
 
-            // todo : Options Identity
             services.ConfigureIdentityOptions();
 
-            // todo : Configure Swagger
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Article", Version = "v1" });
-            });
+            services.ConfigureSwagger();
 
-            // todo : Configure FluentValidation
             services.ConfigureValidation();
         }
 
@@ -82,9 +56,8 @@ namespace Articles
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Article v1"));
 
-            app.UseHttpsRedirection();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Article v1"));
 
             app.UseHttpsRedirection();
 
@@ -108,8 +81,3 @@ namespace Articles
         }
     }
 }
-
-
-//"ConnectionStrings": {
-//  "DatabaseContext" : "Data Source=localhost,1433; Initial Catalog=Articledb; User ID=SA;Password=Password123"
-//},

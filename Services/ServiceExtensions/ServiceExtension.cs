@@ -1,16 +1,19 @@
 using System.Text;
-using Articles.Data;
 using Articles.GenericRepository;
+using Articles.Models.Data.AggregateMails;
+using Articles.Models.Data.AggregateUsers;
+using Articles.Models.Data.DbContext;
 using Articles.Models.DTOs;
 using Articles.Models.DTOs.Validation;
 using Articles.Models.Errors;
-using Articles.Services.DataHandling;
+using Articles.Services.ArticleRepositories;
 using Articles.Services.Mail;
+using Articles.Services.StorageServices;
+using Articles.Services.UserRepositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -20,6 +23,10 @@ namespace Articles.Services.ServiceSetting
     public static class Services
     {
         public static IConfiguration Configuration { get; }
+
+        /// <summary>
+        /// Đăng kí dịch vụ user, role
+        /// </summary>
         public static void ConfigureIdentity(this IServiceCollection services)
         {
             services.AddIdentity<ApiUser, IdentityRole>()
@@ -27,17 +34,19 @@ namespace Articles.Services.ServiceSetting
             .AddDefaultTokenProviders();
         }
 
+        /// <summary>
+        /// Đăng kí dịch vụ JWT provider
+        /// </summary>
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration Configuration)
         {
             var jwtSettings = Configuration.GetSection("Jwt");
             var key = jwtSettings.GetSection("Key").Value;
-
             services.AddAuthentication(option =>
-          {
-              option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-              option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-          })
-              .AddJwtBearer(option =>
+                {
+                    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+            .AddJwtBearer(option =>
               {
                   option.TokenValidationParameters = new TokenValidationParameters()
                   {
@@ -51,6 +60,9 @@ namespace Articles.Services.ServiceSetting
               });
         }
 
+        /// <summary>
+        /// Đăng kí dịch vụ ngoại lệ
+        /// </summary>
         public static void ConfigureExceptionHandler(this IApplicationBuilder app)
         {
             app.UseExceptionHandler(
@@ -76,49 +88,59 @@ namespace Articles.Services.ServiceSetting
             );
         }
 
+        /// <summary>
+        /// Đăng kí dịch vụ validate dữ liệu đầu vào
+        /// </summary>
         public static void ConfigureValidation(this IServiceCollection services)
         {
             services.AddTransient<IValidator<UserDTO>, UserValidation>();
             services.AddTransient<IValidator<Create_ArticleDTO>, ArticleValidation>();
         }
 
+        /// <summary>
+        /// Đăng kí các dịch vụ liên quan tới service
+        /// </summary>
         public static void ConfigureServices(this IServiceCollection services)
         {
+            services.AddTransient<IStorageService, StorageService>();
             services.AddTransient<IArticleRepository, ArticleRepository>();
-            services.AddTransient<IAuthManager, AuthManager>();
+            services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-
-            // services.AddTransient<ISendMailService, SendMailService>();
+            services.AddTransient<ISendMailService, SendMailService>();
         }
 
+        /// <summary>
+        /// Setup
+        /// </summary>
         public static void ConfigureIdentityOptions(this IServiceCollection services)
         {
             services.Configure<IdentityOptions>(options =>
             {
-                //* : Setting Password
-                options.Password.RequireDigit = false; // Not number required
-                options.Password.RequireLowercase = false; // Không bắt phải có chữ thường
-                options.Password.RequireNonAlphanumeric = false; // Không bắt ký tự đặc biệt
-                options.Password.RequireUppercase = false; // Không bắt buộc chữ in
-                options.Password.RequiredLength = 3; // Số ký tự tối thiểu của password
-                options.Password.RequiredUniqueChars = 1; // Số ký tự riêng biệt
+                // : Setting Password
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 1;
+                options.Password.RequiredUniqueChars = 1;
 
                 // Cấu hình Lockout - khóa user
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Khóa 5 phút
-                options.Lockout.MaxFailedAccessAttempts = 5; // Thất bại 5 lầ thì khóa
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
+                options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
-
                 // Cấu hình về User.
-                options.User.AllowedUserNameCharacters = // các ký tự đặt tên user
+                options.User.AllowedUserNameCharacters =
                     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                options.User.RequireUniqueEmail = true;  // Email là duy nhất
-
+                options.User.RequireUniqueEmail = true;
                 // Cấu hình đăng nhập.
-                options.SignIn.RequireConfirmedEmail = true;            // Cấu hình xác thực địa chỉ email (email phải tồn tại)
-                options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
+                options.SignIn.RequireConfirmedEmail = false;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
             });
         }
 
+        /// <summary>
+        /// Cấu hình Swagger
+        /// </summary>
         public static void ConfigureSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
@@ -156,14 +178,24 @@ namespace Articles.Services.ServiceSetting
             });
             IMvcBuilder builder = services.AddRazorPages();
         }
-
+        /// <summary>
+        /// Cấu hình gửi mail
+        /// </summary>
         public static void ConfigureEmailService(this IServiceCollection services, IConfiguration Configuration)
         {
             services.AddOptions();
-            var mailsettings = Configuration.GetSection("Mailsettings");
-            services.Configure<MailSettings>(mailsettings);
-            services.AddTransient<ISendMailService, SendMailService>();
+            var mailSettings = Configuration.GetSection("Mailsettings");
+            services.Configure<MailSettings>(mailSettings);
         }
-
+        public static void ConfigureCors(this IServiceCollection services)
+        {
+            services.AddCors(o =>
+                       {
+                           o.AddPolicy("AllowAll", builder =>
+                               builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader());
+                       });
+        }
     }
 }
