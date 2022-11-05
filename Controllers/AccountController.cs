@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using Articles.Models.DTOs;
 using Articles.Models.Response;
 using Articles.Services.Resource;
 using Articles.Services.UserRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace Articles.Controllers
 {
@@ -11,12 +13,18 @@ namespace Articles.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
+        private HttpContextAccessor _httpContextAccessor;
         public AccountController(IUserRepository userRepository, IConfiguration configuration)
         {
             _userRepository = userRepository;
             _configuration = configuration;
         }
-
+        [HttpGet("/currentUser")]
+        public IActionResult GetCurrentUserAsync()
+        {
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return Ok(username);
+        }
         [HttpPost]
         [Route("/register")]
         public async Task<IActionResult> Register([FromBody] UserDTO userDTO)

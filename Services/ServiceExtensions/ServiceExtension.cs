@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using Articles.GenericRepository;
 using Articles.Models.Data.AggregateMails;
@@ -25,7 +26,6 @@ namespace Articles.Services.ServiceSetting
     public static class Services
     {
         public static IConfiguration Configuration { get; }
-
         /// <summary>
         /// Đăng kí dịch vụ user, role
         /// </summary>
@@ -110,6 +110,7 @@ namespace Articles.Services.ServiceSetting
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<ISendMailService, SendMailService>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
         /// <summary>

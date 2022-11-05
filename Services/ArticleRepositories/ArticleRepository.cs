@@ -1,13 +1,16 @@
 
+using System.Security.Claims;
 using Articles.GenericRepository;
 using Articles.Models;
 using Articles.Models.Data.AggregateArticles;
+using Articles.Models.Data.AggregateUsers;
 using Articles.Models.Data.DbContext;
 using Articles.Models.DTOs;
 using Articles.Models.DTOs.ArticleImage;
 using Articles.Services.ImageRepositories;
 using Articles.Services.StorageServices;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Project_Articles.Controllers;
 
 namespace Articles.Services.ArticleRepositories
@@ -20,11 +23,16 @@ namespace Articles.Services.ArticleRepositories
         private readonly IMapper _mapper;
         private readonly DatabaseContext _context;
         private readonly IImageRepository _imageRepository;
+        private readonly UserManager<ApiUser> _userManager;
+        private readonly HttpContextAccessor _httpContextAccessor;
+        public ClaimsPrincipal user { get; set; }
 
         public ArticleRepository(IUnitOfWork unitOfWork, ILogger<ArticleController> logger, IMapper mapper,
         DatabaseContext context,
         IStorageService storageService,
-         IImageRepository imageRepository)
+         IImageRepository imageRepository,
+         UserManager<ApiUser> userManager
+         )
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -32,12 +40,15 @@ namespace Articles.Services.ArticleRepositories
             _context = context;
             _storageService = storageService;
             _imageRepository = imageRepository;
+            _userManager = userManager;
+
         }
         public async Task<object> CreateArticle(ArticleCreateRequest request)
         {
             var article = _mapper.Map<Article>(request);
             article.ImagePath = await _imageRepository.SaveFile(request.Thumbnails);
             article.ViewCount = 0;
+            article.UserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             await _unitOfWork.Articles.InsertAsync(article);
             await _unitOfWork.Save();
             return new
@@ -90,6 +101,5 @@ namespace Articles.Services.ArticleRepositories
             await _unitOfWork.Save();
             return Resource.Resource.UPDATE_SUCCESS;
         }
-
     }
 }

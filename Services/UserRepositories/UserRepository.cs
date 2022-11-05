@@ -37,7 +37,6 @@ namespace Articles.Services.UserRepositories
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
         }
-
         public async Task<bool> RegisterAsync(UserDTO userDTO)
         {
             var user = _mapper.Map<ApiUser>(userDTO);
