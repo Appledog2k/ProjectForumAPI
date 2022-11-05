@@ -4,17 +4,10 @@ namespace Articles.Models.Data.AggregateUsers
 {
     public class ApiUser : IdentityUser
     {
-        public ApiUser()
-        {
-
-        }
-        public ApiUser(string email)
-        {
-            Email = email;
-        }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime Dob { get; set; }
+        public string Avatar { get; set; }
 
         /// <summary>
         /// Bài viết của đối tượng
