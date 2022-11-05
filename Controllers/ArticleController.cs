@@ -5,6 +5,11 @@ using Articles.Models.Response;
 using Articles.Services.Resource;
 using Articles.Models.DTOs.ArticleImage;
 using Articles.Services.ArticleRepositories;
+using Articles.Models.Data.AggregateArticles;
+using AutoMapper;
+using Articles.Services.ImageRepositories;
+using System.Security.Claims;
+using Articles.GenericRepository;
 
 namespace Project_Articles.Controllers
 {
@@ -13,17 +18,27 @@ namespace Project_Articles.Controllers
     public class ArticleController : ControllerBase
     {
         private readonly IArticleRepository _articleRepository;
-        public ArticleController(IArticleRepository articleRepository)
+        private readonly IMapper _mapper;
+        private readonly IImageRepository _imageRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        public ArticleController(IArticleRepository articleRepository
+        , IMapper mapper,
+        IImageRepository imageRepository,
+        IUnitOfWork unitOfWork)
         {
             _articleRepository = articleRepository;
+            _mapper = mapper;
+            _imageRepository = imageRepository;
+            _unitOfWork = unitOfWork;
         }
+
 
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetArticles()
         {
             var articles = await _articleRepository.GetArticles();
-            return Ok(new Response(Resource.GET_SUCCESS, articles));
+            return Ok(new Response(Resource.GET_SUCCESS, null, articles));
         }
 
         [HttpGet("{id:int}")]
@@ -35,13 +50,20 @@ namespace Project_Articles.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateArticle([FromForm] ArticleCreateRequest request)
         {
-            var result = await _articleRepository.CreateArticle(request);
-            return Ok(new Response(Resource.CREATE_SUCCESS, null, result));
+            var article = _mapper.Map<Article>(request);
+            article.ImagePath = await _imageRepository.SaveFile(request.Thumbnails);
+            article.ViewCount = 0;
+            article.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            await _unitOfWork.Articles.InsertAsync(article);
+            await _unitOfWork.Save();
+            return Ok(new Response(Resource.CREATE_SUCCESS, null, article));
         }
 
         [HttpPut("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> UpdateArticle(int id, [FromForm] ArticleUpdateRequest request)
         {
             var result = await _articleRepository.UpdateArticle(id, request);
