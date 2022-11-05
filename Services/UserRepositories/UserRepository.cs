@@ -220,8 +220,6 @@ namespace Articles.Services.UserRepositories
             }
             return Resource.Resource.RESET_PASSWORD_FAIL;
         }
-
-
     }
 
 }
