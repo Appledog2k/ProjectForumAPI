@@ -10,6 +10,8 @@ using AutoMapper;
 using Articles.Services.ImageRepositories;
 using System.Security.Claims;
 using Articles.GenericRepository;
+using Articles.Models.Data.AggregateUsers;
+using Microsoft.AspNetCore.Identity;
 
 namespace Project_Articles.Controllers
 {
@@ -21,15 +23,18 @@ namespace Project_Articles.Controllers
         private readonly IMapper _mapper;
         private readonly IImageRepository _imageRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly UserManager<ApiUser> _userManager;
         public ArticleController(IArticleRepository articleRepository
         , IMapper mapper,
         IImageRepository imageRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        UserManager<ApiUser> userManager)
         {
             _articleRepository = articleRepository;
             _mapper = mapper;
             _imageRepository = imageRepository;
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
 
 
@@ -54,12 +59,17 @@ namespace Project_Articles.Controllers
         public async Task<IActionResult> CreateArticle([FromForm] ArticleCreateRequest request)
         {
             var article = _mapper.Map<Article>(request);
+            article.CreatedDate = DateTime.Now;
             article.ImagePath = await _imageRepository.SaveFile(request.Thumbnails);
             article.ViewCount = 0;
-            article.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            // Process relationship user
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            ApiUser user = await _userManager.FindByIdAsync(userId);
+            article.AuthorName = $"{user.FirstName} {user.LastName}";
+
             await _unitOfWork.Articles.InsertAsync(article);
             await _unitOfWork.Save();
-            return Ok(new Response(Resource.CREATE_SUCCESS, null, article));
+            return Ok(new Response(Resource.CREATE_SUCCESS, null, article.Title));
         }
 
         [HttpPut("{id:int}")]

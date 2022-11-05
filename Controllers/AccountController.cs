@@ -18,16 +18,19 @@ namespace Articles.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
         private UserManager<ApiUser> _userManager;
+        private readonly SignInManager<ApiUser> _signInManager;
         private HttpContextAccessor _httpContextAccessor;
         private readonly IImageRepository _imageRepository;
         public AccountController(IUserRepository userRepository, IConfiguration configuration,
         UserManager<ApiUser> userManager,
-        IImageRepository imageRepository)
+        IImageRepository imageRepository,
+        SignInManager<ApiUser> signInManager)
         {
             _userRepository = userRepository;
             _configuration = configuration;
             _userManager = userManager;
             _imageRepository = imageRepository;
+            _signInManager = signInManager;
         }
         [HttpPost]
         [Route("/register")]
@@ -78,7 +81,14 @@ namespace Articles.Controllers
         {
             var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             ApiUser user = await _userManager.FindByIdAsync(id);
-            return Ok(user);
+            var result = new
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Avatar = user.Avatar
+            };
+            return Ok(result);
         }
         [HttpPost("/UpdateUser")]
         [Authorize]
@@ -98,6 +108,8 @@ namespace Articles.Controllers
             {
                 user.Avatar = await _imageRepository.SaveFile(request.Thumbnails);
             }
+            await _userManager.UpdateAsync(user);
+            await _signInManager.RefreshSignInAsync(user);
             return Ok(user);
         }
     }

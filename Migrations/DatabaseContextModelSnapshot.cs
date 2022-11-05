@@ -31,6 +31,9 @@ namespace Articles.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("AuthorName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
@@ -95,6 +98,9 @@ namespace Articles.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -191,15 +197,15 @@ namespace Articles.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f7576ab4-7404-4fdf-9d5e-dd3c0f35d17a",
-                            ConcurrencyStamp = "5fd9332c-e94e-4f5a-94da-d0e6d4e6a8f4",
+                            Id = "a253c76f-25db-405e-a6e8-a2192729d68f",
+                            ConcurrencyStamp = "90fccf38-5f89-40c4-b43d-22256ff3b2e0",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "c685addd-459f-4f2e-966b-d60efa751d85",
-                            ConcurrencyStamp = "ede1b880-b28c-4e6e-b385-ca706f014df4",
+                            Id = "761bb0e7-88c4-403c-a490-ded70b91e003",
+                            ConcurrencyStamp = "478c3113-657e-4a7c-bbcc-5237e653c3ad",
                             Name = "User",
                             NormalizedName = "USER"
                         });

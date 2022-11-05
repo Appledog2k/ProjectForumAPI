@@ -31,6 +31,7 @@ namespace Articles.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Dob = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -82,6 +83,8 @@ namespace Articles.Migrations
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ViewCount = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AuthorName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImagePath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Ngày tạo")
                 },
                 constraints: table =>
@@ -179,36 +182,14 @@ namespace Articles.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Images",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false, comment: "Id bảng, khóa chính")
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ArticleId = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Ngày tạo"),
-                    ImagePath = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Caption = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Images", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Images_Articles_ArticleId",
-                        column: x => x.ArticleId,
-                        principalTable: "Articles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.InsertData(
                 table: "Articles",
-                columns: new[] { "Id", "Content", "CreatedDate", "Title", "UserId", "ViewCount" },
+                columns: new[] { "Id", "AuthorName", "Content", "CreatedDate", "ImagePath", "Title", "UserId", "ViewCount" },
                 values: new object[,]
                 {
-                    { 1, "Nội dung bài viết  số 1", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Bài viết số 1", null, 100 },
-                    { 2, "Content of article 2", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Đây là bài viết 2", null, 200 },
-                    { 3, "Nội dung bài viết số 3", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Bài viết số 3", null, 300 }
+                    { 1, null, "Nội dung bài viết  số 1", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Bài viết số 1", null, 100 },
+                    { 2, null, "Content of article 2", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Đây là bài viết 2", null, 200 },
+                    { 3, null, "Nội dung bài viết số 3", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Bài viết số 3", null, 300 }
                 });
 
             migrationBuilder.InsertData(
@@ -216,8 +197,8 @@ namespace Articles.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "27e635fc-bc80-4acf-a935-1e8a43c7e1bd", "9f56e8f4-413d-4fb6-8996-8cccc7cccdcd", "Admin", "ADMIN" },
-                    { "75f61ee6-994a-4452-9b66-89f5cf4a0321", "7b266e28-7007-41ab-9263-91a7748db0be", "User", "USER" }
+                    { "761bb0e7-88c4-403c-a490-ded70b91e003", "478c3113-657e-4a7c-bbcc-5237e653c3ad", "User", "USER" },
+                    { "a253c76f-25db-405e-a6e8-a2192729d68f", "90fccf38-5f89-40c4-b43d-22256ff3b2e0", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -263,15 +244,13 @@ namespace Articles.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Images_ArticleId",
-                table: "Images",
-                column: "ArticleId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Articles");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -288,13 +267,7 @@ namespace Articles.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Images");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "Articles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

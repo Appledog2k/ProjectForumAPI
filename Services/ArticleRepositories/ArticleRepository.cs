@@ -48,7 +48,7 @@ namespace Articles.Services.ArticleRepositories
             var article = _mapper.Map<Article>(request);
             article.ImagePath = await _imageRepository.SaveFile(request.Thumbnails);
             article.ViewCount = 0;
-            article.UserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             await _unitOfWork.Articles.InsertAsync(article);
             await _unitOfWork.Save();
             return new

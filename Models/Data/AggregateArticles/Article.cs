@@ -26,6 +26,10 @@ namespace Articles.Models.Data.AggregateArticles
         /// </summary>
         public ApiUser ApiUser { get; set; }
         /// <summary>
+        /// 
+        /// </summary>
+        public string AuthorName { get; set; }
+        /// <summary>
         // Dánh sách ảnh
         /// </summary>
         public string ImagePath { get; set; }
