@@ -1,10 +1,11 @@
 using Articles.Models.DTOs;
+using Articles.Models.DTOs.ArticleImage;
 using Articles.Services.Resource;
 using FluentValidation;
 
 namespace Articles.Models.DTOs.Validation
 {
-    public class ArticleValidation : AbstractValidator<Create_ArticleDTO>
+    public class ArticleValidation : AbstractValidator<ArticleCreateRequest>
     {
         public ArticleValidation()
         {

@@ -4,6 +4,7 @@ using Articles.Models.Data.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Articles.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20221105040259_updaterepoimage")]
+    partial class updaterepoimage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -191,15 +193,15 @@ namespace Articles.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "53c09174-d091-412e-bc38-094432ff6fbb",
-                            ConcurrencyStamp = "231d2b60-96d5-499a-b24e-e387b5547ce6",
+                            Id = "57b7cfdd-f477-44a2-8715-26e7c2a11330",
+                            ConcurrencyStamp = "158c6767-63b5-47aa-ab3a-39638de062ba",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "f766cba4-daae-4ca1-a564-63edf70e7a42",
-                            ConcurrencyStamp = "a2915518-f68f-4ffc-8244-fcf5d8f53264",
+                            Id = "103ed533-17f5-4214-8aa6-48454d497196",
+                            ConcurrencyStamp = "194f30e6-95fd-42f3-869d-2c279b492efc",
                             Name = "User",
                             NormalizedName = "USER"
                         });

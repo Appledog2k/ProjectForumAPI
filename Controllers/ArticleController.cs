@@ -35,18 +35,16 @@ namespace Project_Articles.Controllers
         }
 
         [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> CreateArticle([FromBody] Create_ArticleDTO articleDTO)
+        public async Task<IActionResult> CreateArticle([FromForm] ArticleCreateRequest request)
         {
-            var result = await _articleRepository.CreateArticle(articleDTO);
+            var result = await _articleRepository.CreateArticle(request);
             return Ok(new Response(Resource.CREATE_SUCCESS, null, result));
         }
 
-        [HttpPut]
-        [Authorize]
-        public async Task<IActionResult> UpdateArticle(int id, [FromBody] Update_ArticleDTO articleDTO)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateArticle(int id, [FromForm] ArticleUpdateRequest request)
         {
-            var result = await _articleRepository.UpdateArticle(id, articleDTO);
+            var result = await _articleRepository.UpdateArticle(id, request);
             return Ok(new Response(result));
         }
 
@@ -56,45 +54,6 @@ namespace Project_Articles.Controllers
         {
             var result = await _articleRepository.DeleteArticle(id);
             return Ok(new Response(result));
-        }
-
-        [HttpPost("{articleId}/images")]
-        public async Task<IActionResult> CreateImageArticle(int articleId, [FromForm] ArticleImageCreateRequest request)
-        {
-            var imageId = await _articleRepository.AddImage(articleId, request);
-            if (imageId == 0)
-            {
-                return BadRequest();
-            }
-
-            var image = await _articleRepository.GetImageById(imageId);
-            return Ok(image.Caption);
-        }
-        [HttpPut("images/{imageId}")]
-        public async Task<IActionResult> UpdateImageArticle(int imageId, [FromForm] ArticleImageUpdateRequest request)
-        {
-            var result = await _articleRepository.UpdateImage(imageId, request);
-            if (result == 0)
-            {
-                return BadRequest();
-            }
-            return Ok();
-        }
-        [HttpDelete("{articleId}/images/{imageId}")]
-        public async Task<IActionResult> DeleteImageArticle(int imageId, [FromForm] ArticleImageUpdateRequest request)
-        {
-            var result = await _articleRepository.RemoveImage(imageId);
-            if (result == 0)
-            {
-                return BadRequest();
-            }
-            return Ok();
-        }
-        [HttpGet("{articleId:int}/images/{imageId}")]
-        public async Task<IActionResult> GetImageById(int articleId, int imageId)
-        {
-            var image = await _articleRepository.GetImageById(articleId);
-            return Ok(image);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Articles.Configuration.Entities
                     CreatedDate = new System.DateTime(2023, 1, 1),
                     Content = "Nội dung bài viết  số 1",
                     ViewCount = 100,
+                    ImagePath = "images/"
                 },
                 new Article
                 {
@@ -23,6 +24,7 @@ namespace Articles.Configuration.Entities
                     CreatedDate = new System.DateTime(2023, 1, 1),
                     Content = "Content of article 2",
                     ViewCount = 200,
+                    ImagePath = "images/"
                 },
                 new Article
                 {
@@ -31,10 +33,11 @@ namespace Articles.Configuration.Entities
                     CreatedDate = new System.DateTime(2023, 1, 1),
                     Content = "Nội dung bài viết số 3",
                     ViewCount = 300,
+                    ImagePath = "images/"
                 }
             );
-            // todo : Key
             builder.HasKey(options => options.Id);
+            builder.Property(x => x.ImagePath).HasMaxLength(500).IsRequired(true);
             builder.HasOne(x => x.ApiUser).WithMany(x => x.Articles).HasForeignKey(x => x.UserId);
         }
     }

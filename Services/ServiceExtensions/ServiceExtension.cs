@@ -4,9 +4,11 @@ using Articles.Models.Data.AggregateMails;
 using Articles.Models.Data.AggregateUsers;
 using Articles.Models.Data.DbContext;
 using Articles.Models.DTOs;
+using Articles.Models.DTOs.ArticleImage;
 using Articles.Models.DTOs.Validation;
 using Articles.Models.Errors;
 using Articles.Services.ArticleRepositories;
+using Articles.Services.ImageRepositories;
 using Articles.Services.Mail;
 using Articles.Services.StorageServices;
 using Articles.Services.UserRepositories;
@@ -94,7 +96,7 @@ namespace Articles.Services.ServiceSetting
         public static void ConfigureValidation(this IServiceCollection services)
         {
             services.AddTransient<IValidator<UserDTO>, UserValidation>();
-            services.AddTransient<IValidator<Create_ArticleDTO>, ArticleValidation>();
+            services.AddTransient<IValidator<ArticleCreateRequest>, ArticleValidation>();
         }
 
         /// <summary>
@@ -103,6 +105,7 @@ namespace Articles.Services.ServiceSetting
         public static void ConfigureServices(this IServiceCollection services)
         {
             services.AddTransient<IStorageService, StorageService>();
+            services.AddTransient<IImageRepository, ImageRepository>();
             services.AddTransient<IArticleRepository, ArticleRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();

@@ -1,4 +1,3 @@
-using Articles.Models.Data.AggregateImages;
 using Articles.Models.Data.AggregateUsers;
 using Articles.Models.BaseModels;
 
@@ -18,7 +17,6 @@ namespace Articles.Models.Data.AggregateArticles
         /// Số lượt xem bài viết
         /// </summary>
         public int ViewCount { get; set; }
-
         /// <summary>
         /// Id người tạo
         /// </summary>
@@ -30,6 +28,6 @@ namespace Articles.Models.Data.AggregateArticles
         /// <summary>
         // Dánh sách ảnh
         /// </summary>
-        public ICollection<ImageArticle> ImageArticles { get; set; }
+        public string ImagePath { get; set; }
     }
 }

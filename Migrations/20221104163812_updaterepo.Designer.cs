@@ -4,6 +4,7 @@ using Articles.Models.Data.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Articles.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20221104163812_updaterepo")]
+    partial class updaterepo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,11 +40,6 @@ namespace Articles.Migrations
                         .HasColumnType("datetime2")
                         .HasComment("Ngày tạo");
 
-                    b.Property<string>("ImagePath")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -64,7 +61,6 @@ namespace Articles.Migrations
                             Id = 1,
                             Content = "Nội dung bài viết  số 1",
                             CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImagePath = "images/",
                             Title = "Bài viết số 1",
                             ViewCount = 100
                         },
@@ -73,7 +69,6 @@ namespace Articles.Migrations
                             Id = 2,
                             Content = "Content of article 2",
                             CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImagePath = "images/",
                             Title = "Đây là bài viết 2",
                             ViewCount = 200
                         },
@@ -82,10 +77,41 @@ namespace Articles.Migrations
                             Id = 3,
                             Content = "Nội dung bài viết số 3",
                             CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImagePath = "images/",
                             Title = "Bài viết số 3",
                             ViewCount = 300
                         });
+                });
+
+            modelBuilder.Entity("Articles.Models.Data.AggregateImages.ImageArticle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasComment("Id bảng, khóa chính");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ArticleId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Caption")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasComment("Ngày tạo");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArticleId");
+
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("Articles.Models.Data.AggregateUsers.ApiUser", b =>
@@ -191,15 +217,15 @@ namespace Articles.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "53c09174-d091-412e-bc38-094432ff6fbb",
-                            ConcurrencyStamp = "231d2b60-96d5-499a-b24e-e387b5547ce6",
+                            Id = "c06a9b8c-8978-4c1d-8b0a-cd3f7c0074d3",
+                            ConcurrencyStamp = "de656551-1e08-443e-bb40-e44096deac80",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "f766cba4-daae-4ca1-a564-63edf70e7a42",
-                            ConcurrencyStamp = "a2915518-f68f-4ffc-8244-fcf5d8f53264",
+                            Id = "843d9a89-23dd-4425-b8cf-4f7b0b10bda0",
+                            ConcurrencyStamp = "fe96d829-ed02-45d2-ade7-54f59c01e52f",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -320,6 +346,17 @@ namespace Articles.Migrations
                     b.Navigation("ApiUser");
                 });
 
+            modelBuilder.Entity("Articles.Models.Data.AggregateImages.ImageArticle", b =>
+                {
+                    b.HasOne("Articles.Models.Data.AggregateArticles.Article", "Article")
+                        .WithMany("ImageArticles")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Article");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -369,6 +406,11 @@ namespace Articles.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Articles.Models.Data.AggregateArticles.Article", b =>
+                {
+                    b.Navigation("ImageArticles");
                 });
 
             modelBuilder.Entity("Articles.Models.Data.AggregateUsers.ApiUser", b =>
