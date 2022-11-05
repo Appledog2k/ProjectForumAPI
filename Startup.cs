@@ -25,7 +25,10 @@ namespace Articles
 
             services.AddAutoMapper(typeof(Startup));
 
-            services.AddControllers().AddNewtonsoftJson(op =>
+            services.AddControllers(opt =>
+{
+    opt.AllowEmptyInputInBodyModelBinding = false;
+}).AddNewtonsoftJson(op =>
             op.SerializerSettings.ReferenceLoopHandling =
             Newtonsoft.Json.ReferenceLoopHandling.Ignore)
             .AddFluentValidation();
@@ -77,6 +80,9 @@ namespace Articles
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                   name: "default",
+                   pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

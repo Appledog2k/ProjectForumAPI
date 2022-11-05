@@ -51,6 +51,8 @@ namespace Project_Articles.Controllers
         public async Task<IActionResult> GetArticle(int id)
         {
             var article = await _articleRepository.GetArticle(id);
+            // var article = await _unitOfWork.Articles.GetAsync(query => query.Id == id);
+            // var result = _mapper.Map<ArticleViewRequest>(article);
             return Ok(new Response(Resource.GET_SUCCESS, new { id = id }, article));
         }
 
@@ -60,11 +62,15 @@ namespace Project_Articles.Controllers
         {
             var article = _mapper.Map<Article>(request);
             article.CreatedDate = DateTime.Now;
-            article.ImagePath = await _imageRepository.SaveFile(request.Thumbnails);
+            if (request.Thumbnails != null)
+            {
+                article.ImagePath = await _imageRepository.SaveFile(request.Thumbnails);
+            }
             article.ViewCount = 0;
             // Process relationship user
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             ApiUser user = await _userManager.FindByIdAsync(userId);
+            article.UserId = userId;
             article.AuthorName = $"{user.FirstName} {user.LastName}";
 
             await _unitOfWork.Articles.InsertAsync(article);

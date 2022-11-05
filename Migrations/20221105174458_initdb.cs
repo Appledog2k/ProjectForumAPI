@@ -53,6 +53,19 @@ namespace Articles.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -79,13 +92,13 @@ namespace Articles.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false, comment: "Id bảng, khóa chính")
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Ngày tạo"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ViewCount = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     AuthorName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ImagePath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Ngày tạo")
+                    ImagePath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -182,6 +195,32 @@ namespace Articles.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ArticleInCategories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    ArticleId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArticleInCategories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ArticleInCategories_Articles_ArticleId",
+                        column: x => x.ArticleId,
+                        principalTable: "Articles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ArticleInCategories_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Articles",
                 columns: new[] { "Id", "AuthorName", "Content", "CreatedDate", "ImagePath", "Title", "UserId", "ViewCount" },
@@ -197,9 +236,19 @@ namespace Articles.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "761bb0e7-88c4-403c-a490-ded70b91e003", "478c3113-657e-4a7c-bbcc-5237e653c3ad", "User", "USER" },
-                    { "a253c76f-25db-405e-a6e8-a2192729d68f", "90fccf38-5f89-40c4-b43d-22256ff3b2e0", "Admin", "ADMIN" }
+                    { "2bc7e415-01ec-41cd-9c6b-2b387a3fa527", "ed436c96-cbfe-49ee-9750-1d5d8ed5fc66", "User", "USER" },
+                    { "53a87b28-dcd5-4585-882f-875ddf6c010f", "1b60d4f8-b821-454b-8c91-e8c8bcfe1f31", "Admin", "ADMIN" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArticleInCategories_ArticleId",
+                table: "ArticleInCategories",
+                column: "ArticleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArticleInCategories_CategoryId",
+                table: "ArticleInCategories",
+                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Articles_UserId",
@@ -249,7 +298,7 @@ namespace Articles.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Articles");
+                name: "ArticleInCategories");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -265,6 +314,12 @@ namespace Articles.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Articles");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

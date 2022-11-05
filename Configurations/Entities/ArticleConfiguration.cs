@@ -37,7 +37,7 @@ namespace Articles.Configuration.Entities
                 }
             );
             builder.HasKey(options => options.Id);
-            builder.Property(x => x.ImagePath).HasMaxLength(500).IsRequired(true);
+            builder.Property(x => x.ImagePath).HasMaxLength(500).IsRequired(false);
             builder.HasOne(x => x.ApiUser).WithMany(x => x.Articles).HasForeignKey(x => x.UserId);
         }
     }

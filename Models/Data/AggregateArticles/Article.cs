@@ -1,10 +1,20 @@
 using Articles.Models.Data.AggregateUsers;
 using Articles.Models.BaseModels;
+using Articles.Models.Data.AggregateCategories;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Articles.Models.Data.AggregateArticleInCategory;
 
 namespace Articles.Models.Data.AggregateArticles
 {
-    public class Article : BaseModel
+    public class Article
     {
+        [Comment("Id bảng, khóa chính")]
+        [Key]
+        public int Id { get; set; }
+        [Comment("Ngày tạo")]
+        public DateTime CreatedDate { get; set; }
         /// <summary>
         /// Tiêu đề bài viết
         /// </summary>
@@ -33,5 +43,10 @@ namespace Articles.Models.Data.AggregateArticles
         // Dánh sách ảnh
         /// </summary>
         public string ImagePath { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual IList<ArticleInCategory> ArticleInCategories { get; set; }
+
     }
 }
