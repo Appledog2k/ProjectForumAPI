@@ -22,29 +22,6 @@ namespace Articles.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Articles.Models.Data.AggregateArticleInCategory.ArticleInCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("ArticleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ArticleId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("ArticleInCategories");
-                });
-
             modelBuilder.Entity("Articles.Models.Data.AggregateArticles.Article", b =>
                 {
                     b.Property<int>("Id")
@@ -55,6 +32,9 @@ namespace Articles.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AuthorName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Content")
@@ -111,24 +91,6 @@ namespace Articles.Migrations
                             Title = "Bài viết số 3",
                             ViewCount = 300
                         });
-                });
-
-            modelBuilder.Entity("Articles.Models.Data.AggregateCategories.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Articles.Models.Data.AggregateUsers.ApiUser", b =>
@@ -237,15 +199,15 @@ namespace Articles.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "53a87b28-dcd5-4585-882f-875ddf6c010f",
-                            ConcurrencyStamp = "1b60d4f8-b821-454b-8c91-e8c8bcfe1f31",
+                            Id = "30bd3c75-483c-4340-aced-fad7698f45aa",
+                            ConcurrencyStamp = "8c0e383f-fc4f-48a8-9b19-dd24863fb1f6",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "2bc7e415-01ec-41cd-9c6b-2b387a3fa527",
-                            ConcurrencyStamp = "ed436c96-cbfe-49ee-9750-1d5d8ed5fc66",
+                            Id = "8c3ec302-8ce9-4717-bd6a-1b9dcc1350a5",
+                            ConcurrencyStamp = "910a9d69-d620-4b4e-8677-5a253969daf6",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -357,25 +319,6 @@ namespace Articles.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Articles.Models.Data.AggregateArticleInCategory.ArticleInCategory", b =>
-                {
-                    b.HasOne("Articles.Models.Data.AggregateArticles.Article", "Article")
-                        .WithMany("ArticleInCategories")
-                        .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Articles.Models.Data.AggregateCategories.Category", "Category")
-                        .WithMany("ArticleInCategories")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Article");
-
-                    b.Navigation("Category");
-                });
-
             modelBuilder.Entity("Articles.Models.Data.AggregateArticles.Article", b =>
                 {
                     b.HasOne("Articles.Models.Data.AggregateUsers.ApiUser", "ApiUser")
@@ -434,16 +377,6 @@ namespace Articles.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Articles.Models.Data.AggregateArticles.Article", b =>
-                {
-                    b.Navigation("ArticleInCategories");
-                });
-
-            modelBuilder.Entity("Articles.Models.Data.AggregateCategories.Category", b =>
-                {
-                    b.Navigation("ArticleInCategories");
                 });
 
             modelBuilder.Entity("Articles.Models.Data.AggregateUsers.ApiUser", b =>

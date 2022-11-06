@@ -7,6 +7,7 @@ using Articles.Models.Data.AggregateUsers;
 using Articles.Models.Data.DbContext;
 using Articles.Models.DTOs;
 using Articles.Models.DTOs.ArticleImage;
+using Articles.Models.DTOs.ArticleRequest;
 using Articles.Services.ImageRepositories;
 using Articles.Services.StorageServices;
 using AutoMapper;

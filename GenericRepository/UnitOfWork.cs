@@ -1,3 +1,4 @@
+
 using Articles.Models.Data.AggregateArticles;
 using Articles.Models.Data.DbContext;
 
@@ -12,6 +13,7 @@ namespace Articles.GenericRepository
     {
         private readonly DatabaseContext _context;
         private IRepository<Article> _articles;
+
         public UnitOfWork(DatabaseContext context)
         {
             _context = context;

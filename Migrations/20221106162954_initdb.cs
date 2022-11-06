@@ -53,19 +53,6 @@ namespace Articles.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categories",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -95,6 +82,7 @@ namespace Articles.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Ngày tạo"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Category = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ViewCount = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     AuthorName = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -195,40 +183,14 @@ namespace Articles.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "ArticleInCategories",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    ArticleId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ArticleInCategories", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ArticleInCategories_Articles_ArticleId",
-                        column: x => x.ArticleId,
-                        principalTable: "Articles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ArticleInCategories_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.InsertData(
                 table: "Articles",
-                columns: new[] { "Id", "AuthorName", "Content", "CreatedDate", "ImagePath", "Title", "UserId", "ViewCount" },
+                columns: new[] { "Id", "AuthorName", "Category", "Content", "CreatedDate", "ImagePath", "Title", "UserId", "ViewCount" },
                 values: new object[,]
                 {
-                    { 1, null, "Nội dung bài viết  số 1", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Bài viết số 1", null, 100 },
-                    { 2, null, "Content of article 2", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Đây là bài viết 2", null, 200 },
-                    { 3, null, "Nội dung bài viết số 3", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Bài viết số 3", null, 300 }
+                    { 1, null, null, "Nội dung bài viết  số 1", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Bài viết số 1", null, 100 },
+                    { 2, null, null, "Content of article 2", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Đây là bài viết 2", null, 200 },
+                    { 3, null, null, "Nội dung bài viết số 3", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Bài viết số 3", null, 300 }
                 });
 
             migrationBuilder.InsertData(
@@ -236,19 +198,9 @@ namespace Articles.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "2bc7e415-01ec-41cd-9c6b-2b387a3fa527", "ed436c96-cbfe-49ee-9750-1d5d8ed5fc66", "User", "USER" },
-                    { "53a87b28-dcd5-4585-882f-875ddf6c010f", "1b60d4f8-b821-454b-8c91-e8c8bcfe1f31", "Admin", "ADMIN" }
+                    { "30bd3c75-483c-4340-aced-fad7698f45aa", "8c0e383f-fc4f-48a8-9b19-dd24863fb1f6", "Admin", "ADMIN" },
+                    { "8c3ec302-8ce9-4717-bd6a-1b9dcc1350a5", "910a9d69-d620-4b4e-8677-5a253969daf6", "User", "USER" }
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ArticleInCategories_ArticleId",
-                table: "ArticleInCategories",
-                column: "ArticleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ArticleInCategories_CategoryId",
-                table: "ArticleInCategories",
-                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Articles_UserId",
@@ -298,7 +250,7 @@ namespace Articles.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ArticleInCategories");
+                name: "Articles");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -314,12 +266,6 @@ namespace Articles.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
-
-            migrationBuilder.DropTable(
-                name: "Articles");
-
-            migrationBuilder.DropTable(
-                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

@@ -1,5 +1,6 @@
 using Articles.Models.DTOs;
 using Articles.Models.DTOs.ArticleImage;
+using Articles.Models.DTOs.ArticleRequest;
 
 namespace Articles.Services.ArticleRepositories
 {

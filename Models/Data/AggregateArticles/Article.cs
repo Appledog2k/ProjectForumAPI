@@ -1,10 +1,8 @@
 using Articles.Models.Data.AggregateUsers;
 using Articles.Models.BaseModels;
-using Articles.Models.Data.AggregateCategories;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Articles.Models.Data.AggregateArticleInCategory;
 
 namespace Articles.Models.Data.AggregateArticles
 {
@@ -23,6 +21,10 @@ namespace Articles.Models.Data.AggregateArticles
         /// Nội dung bài viết
         /// </summary>
         public string Content { get; set; }
+        /// <summary>
+        /// Chủ đề bài viết
+        /// </summary>
+        public string Category { get; set; }
         /// <summary>
         /// Số lượt xem bài viết
         /// </summary>
@@ -46,7 +48,7 @@ namespace Articles.Models.Data.AggregateArticles
         /// <summary>
         /// 
         /// </summary>
-        public virtual IList<ArticleInCategory> ArticleInCategories { get; set; }
+        // public virtual IList<ArticleInCategory> ArticleInCategories { get; set; }
 
     }
 }

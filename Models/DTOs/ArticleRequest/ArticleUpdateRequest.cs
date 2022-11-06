@@ -7,7 +7,6 @@ namespace Articles.Models.DTOs.ArticleImage
         public string Title { get; set; }
         public string Content { get; set; }
 
-        public int ViewCount { get; set; }
         [DataType(DataType.Upload)]
         public IFormFile Thumbnails { get; set; }
     }

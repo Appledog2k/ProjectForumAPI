@@ -86,7 +86,8 @@ namespace Articles.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Avatar = user.Avatar
+                Avatar = user.Avatar,
+                Id = id
             };
             return Ok(result);
         }
@@ -103,7 +104,21 @@ namespace Articles.Controllers
             if (!string.IsNullOrEmpty(request.FirstName))
                 user.FirstName = request.FirstName;
             if (!string.IsNullOrEmpty(request.LastName))
-                user.LastName = request.LastName;
+                //     user.LastName = request.LastName;
+                // if (request.Thumbnails != null)
+                // {
+                //     user.Avatar = await _imageRepository.SaveFile(request.Thumbnails);
+                // }
+                await _userManager.UpdateAsync(user);
+            await _signInManager.RefreshSignInAsync(user);
+            return Ok(user);
+        }
+        [HttpPost("/UpdateAvatarUser")]
+        [Authorize]
+        public async Task<IActionResult> UpdateAvatarUser([FromForm] UserUpdateAvatarRequest request)
+        {
+            var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            ApiUser user = await _userManager.FindByIdAsync(id);
             if (request.Thumbnails != null)
             {
                 user.Avatar = await _imageRepository.SaveFile(request.Thumbnails);
@@ -112,5 +127,6 @@ namespace Articles.Controllers
             await _signInManager.RefreshSignInAsync(user);
             return Ok(user);
         }
+
     }
 }

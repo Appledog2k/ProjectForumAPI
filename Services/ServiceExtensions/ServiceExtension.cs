@@ -5,7 +5,7 @@ using Articles.Models.Data.AggregateMails;
 using Articles.Models.Data.AggregateUsers;
 using Articles.Models.Data.DbContext;
 using Articles.Models.DTOs;
-using Articles.Models.DTOs.ArticleImage;
+using Articles.Models.DTOs.ArticleRequest;
 using Articles.Models.DTOs.Validation;
 using Articles.Models.Errors;
 using Articles.Services.ArticleRepositories;

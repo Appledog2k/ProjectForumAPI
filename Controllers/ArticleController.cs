@@ -12,6 +12,7 @@ using System.Security.Claims;
 using Articles.GenericRepository;
 using Articles.Models.Data.AggregateUsers;
 using Microsoft.AspNetCore.Identity;
+using Articles.Models.DTOs.ArticleRequest;
 
 namespace Project_Articles.Controllers
 {
@@ -60,22 +61,25 @@ namespace Project_Articles.Controllers
         [Authorize]
         public async Task<IActionResult> CreateArticle([FromForm] ArticleCreateRequest request)
         {
-            var article = _mapper.Map<Article>(request);
-            article.CreatedDate = DateTime.Now;
-            if (request.Thumbnails != null)
+            if (request.Category == "a" || request.Category == "b" || request.Category == "c" || request.Category == "d" || request.Category == "e")
             {
-                article.ImagePath = await _imageRepository.SaveFile(request.Thumbnails);
+                var article = _mapper.Map<Article>(request);
+                article.CreatedDate = DateTime.Now;
+                if (request.Thumbnails != null)
+                {
+                    article.ImagePath = await _imageRepository.SaveFile(request.Thumbnails);
+                }
+                article.ViewCount = 0;
+                // Process relationship user
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                ApiUser user = await _userManager.FindByIdAsync(userId);
+                article.UserId = userId;
+                article.AuthorName = $"{user.FirstName} {user.LastName}";
+                await _unitOfWork.Articles.InsertAsync(article);
+                await _unitOfWork.Save();
+                return Ok(new Response(Resource.CREATE_SUCCESS, null, article));
             }
-            article.ViewCount = 0;
-            // Process relationship user
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            ApiUser user = await _userManager.FindByIdAsync(userId);
-            article.UserId = userId;
-            article.AuthorName = $"{user.FirstName} {user.LastName}";
-
-            await _unitOfWork.Articles.InsertAsync(article);
-            await _unitOfWork.Save();
-            return Ok(new Response(Resource.CREATE_SUCCESS, null, article.Title));
+            throw new Exception("Yêu cầu chọn đúng chủ đề");
         }
 
         [HttpPut("{id:int}")]
