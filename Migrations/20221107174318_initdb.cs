@@ -82,7 +82,7 @@ namespace Articles.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Ngày tạo"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Category = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Category = table.Column<int>(type: "int", nullable: false),
                     ViewCount = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     AuthorName = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -188,9 +188,9 @@ namespace Articles.Migrations
                 columns: new[] { "Id", "AuthorName", "Category", "Content", "CreatedDate", "ImagePath", "Title", "UserId", "ViewCount" },
                 values: new object[,]
                 {
-                    { 1, null, null, "Nội dung bài viết  số 1", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Bài viết số 1", null, 100 },
-                    { 2, null, null, "Content of article 2", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Đây là bài viết 2", null, 200 },
-                    { 3, null, null, "Nội dung bài viết số 3", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Bài viết số 3", null, 300 }
+                    { 1, null, 0, "Nội dung bài viết  số 1", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Bài viết số 1", null, 100 },
+                    { 2, null, 0, "Content of article 2", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Đây là bài viết 2", null, 200 },
+                    { 3, null, 0, "Nội dung bài viết số 3", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "images/", "Bài viết số 3", null, 300 }
                 });
 
             migrationBuilder.InsertData(
@@ -198,8 +198,8 @@ namespace Articles.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "30bd3c75-483c-4340-aced-fad7698f45aa", "8c0e383f-fc4f-48a8-9b19-dd24863fb1f6", "Admin", "ADMIN" },
-                    { "8c3ec302-8ce9-4717-bd6a-1b9dcc1350a5", "910a9d69-d620-4b4e-8677-5a253969daf6", "User", "USER" }
+                    { "f5b151f3-08ad-49df-ba56-2909af9a04b5", "09c413b9-3226-4652-84c8-f27ba58e2c5d", "Admin", "ADMIN" },
+                    { "fdebcc40-a761-4a01-9866-38fac20c0fe3", "aa38c7fe-b769-404b-a89b-6420ed4713d3", "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(

@@ -34,8 +34,8 @@ namespace Articles.Migrations
                     b.Property<string>("AuthorName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Category")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
@@ -67,6 +67,7 @@ namespace Articles.Migrations
                         new
                         {
                             Id = 1,
+                            Category = 0,
                             Content = "Nội dung bài viết  số 1",
                             CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ImagePath = "images/",
@@ -76,6 +77,7 @@ namespace Articles.Migrations
                         new
                         {
                             Id = 2,
+                            Category = 0,
                             Content = "Content of article 2",
                             CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ImagePath = "images/",
@@ -85,6 +87,7 @@ namespace Articles.Migrations
                         new
                         {
                             Id = 3,
+                            Category = 0,
                             Content = "Nội dung bài viết số 3",
                             CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ImagePath = "images/",
@@ -199,15 +202,15 @@ namespace Articles.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "30bd3c75-483c-4340-aced-fad7698f45aa",
-                            ConcurrencyStamp = "8c0e383f-fc4f-48a8-9b19-dd24863fb1f6",
+                            Id = "f5b151f3-08ad-49df-ba56-2909af9a04b5",
+                            ConcurrencyStamp = "09c413b9-3226-4652-84c8-f27ba58e2c5d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "8c3ec302-8ce9-4717-bd6a-1b9dcc1350a5",
-                            ConcurrencyStamp = "910a9d69-d620-4b4e-8677-5a253969daf6",
+                            Id = "fdebcc40-a761-4a01-9866-38fac20c0fe3",
+                            ConcurrencyStamp = "aa38c7fe-b769-404b-a89b-6420ed4713d3",
                             Name = "User",
                             NormalizedName = "USER"
                         });

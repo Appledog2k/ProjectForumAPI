@@ -24,7 +24,7 @@ namespace Articles.Models.Data.AggregateArticles
         /// <summary>
         /// Chủ đề bài viết
         /// </summary>
-        public string Category { get; set; }
+        public int Category { get; set; }
         /// <summary>
         /// Số lượt xem bài viết
         /// </summary>

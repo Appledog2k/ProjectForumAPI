@@ -6,7 +6,7 @@ namespace Articles.Models.DTOs.ArticleRequest
     {
         public string Title { get; set; }
         public string Content { get; set; }
-        public string Category { get; set; }
+        public int Category { get; set; }
         [DataType(DataType.Upload)]
         public IFormFile Thumbnails { get; set; }
     }

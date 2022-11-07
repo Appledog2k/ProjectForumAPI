@@ -56,12 +56,23 @@ namespace Project_Articles.Controllers
             // var result = _mapper.Map<ArticleViewRequest>(article);
             return Ok(new Response(Resource.GET_SUCCESS, new { id = id }, article));
         }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("category/{request:int}")]
+        public async Task<IActionResult> GetArticleByCategory(int request)
+        {
+            var articles = await _articleRepository.GetArticleByCategory(request);
+            // var article = await _unitOfWork.Articles.GetAsync(query => query.Id == id);
+            // var result = _mapper.Map<ArticleViewRequest>(article);
+            return Ok(new Response(Resource.GET_SUCCESS, null, articles));
+        }
+
 
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> CreateArticle([FromForm] ArticleCreateRequest request)
         {
-            if (request.Category == "a" || request.Category == "b" || request.Category == "c" || request.Category == "d" || request.Category == "e")
+            if (request.Category == 1 || request.Category == 2 || request.Category == 3 || request.Category == 4 || request.Category == 5)
             {
                 var article = _mapper.Map<Article>(request);
                 article.CreatedDate = DateTime.Now;

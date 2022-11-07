@@ -79,6 +79,15 @@ namespace Articles.Services.ArticleRepositories
                 result
             };
         }
+        public async Task<object> GetArticleByCategory(int request)
+        {
+            var articles = await _unitOfWork.Articles.GetAllAsync();
+            var results = from article in articles
+                          where article.Category == request
+                          select article;
+            return new { results };
+        }
+
         public async Task<object> GetArticles()
         {
             var articles = await _unitOfWork.Articles.GetAllAsync();
