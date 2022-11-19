@@ -46,6 +46,19 @@ namespace Project_Articles.Controllers
             var articles = await _articleRepository.GetArticles();
             return Ok(new Response(Resource.GET_SUCCESS, null, articles));
         }
+        [Authorize(Roles = "User, Admin")]
+        [Route("getArticlesOfMe")]
+        [HttpGet]
+        public async Task<IActionResult> GetArticleOfMe()
+        {
+            var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var articles = await _unitOfWork.Articles.GetAllAsync();
+            var filterByUserId = from article in articles
+                                 where article.UserId == id
+                                 select article;
+            var results = _mapper.Map<IList<ArticleViewRequest>>(filterByUserId);
+            return Ok(new Response(Resource.GET_SUCCESS, null, results));
+        }
         [Authorize(Roles = "Admin")]
         [Route("getArticlesByAdmin")]
         [HttpGet]

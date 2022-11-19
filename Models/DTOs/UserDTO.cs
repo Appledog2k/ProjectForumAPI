@@ -11,7 +11,7 @@ namespace Articles.Models.DTOs
         public string ConfirmPassword { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string isAdmin { get; set; }
+        public bool isAdmin { get; set; }
         public ICollection<string> Roles { get; set; }
     }
 

@@ -82,6 +82,10 @@ namespace Articles.Controllers
         {
             var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             ApiUser user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                throw new Exception("Không tìm thấy thông tin do Id không tồn tại.");
+            }
             var result = new
             {
                 FirstName = user.FirstName,
@@ -101,7 +105,7 @@ namespace Articles.Controllers
             ApiUser user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                throw new InvalidOperationException("User " + id + "Not Found");
+                throw new Exception("Không tìm thấy thông tin do Id không tồn tại.");
             }
             if (!string.IsNullOrEmpty(request.FirstName))
                 user.FirstName = request.FirstName;
