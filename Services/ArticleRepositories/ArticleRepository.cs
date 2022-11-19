@@ -106,9 +106,10 @@ namespace Articles.Services.ArticleRepositories
                     else
                         return false;
                 }).AsQueryable();
-            return new { query };
-
-
+            var resultFilter = from result in query
+                               where result.IsActive == true
+                               select result;
+            return new { resultFilter };
         }
         private string ConvertToUnSign(string input)
         {

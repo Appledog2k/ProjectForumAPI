@@ -60,7 +60,10 @@ namespace Project_Articles.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetArticle(int id)
         {
-            var article = await _articleRepository.GetArticle(id);
+            var article = await _unitOfWork.Articles.GetAsync(q => q.Id == id);
+            article.ViewCount += 1;
+            _unitOfWork.Articles.Update(article);
+            await _unitOfWork.Save();
             // var article = await _unitOfWork.Articles.GetAsync(query => query.Id == id);
             // var result = _mapper.Map<ArticleViewRequest>(article);
             return Ok(new Response(Resource.GET_SUCCESS, new { id = id }, article));
