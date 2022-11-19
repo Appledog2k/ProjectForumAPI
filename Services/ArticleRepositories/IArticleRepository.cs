@@ -7,6 +7,8 @@ namespace Articles.Services.ArticleRepositories
     public interface IArticleRepository
     {
         Task<object> GetArticles();
+        Task<object> GetArticlesByAdmin();
+
         Task<object> GetArticle(int id);
         Task<object> GetArticleByCategory(int request);
         Task<object> CreateArticle(ArticleCreateRequest request);

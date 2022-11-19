@@ -46,6 +46,10 @@ namespace Articles.Models.Data.AggregateArticles
         /// </summary>
         public string ImagePath { get; set; }
         /// <summary>
+        /// Active
+        /// </summary>
+        public bool IsActive { get; set; } = false;
+        /// <summary>
         /// 
         /// </summary>
         // public virtual IList<ArticleInCategory> ArticleInCategories { get; set; }

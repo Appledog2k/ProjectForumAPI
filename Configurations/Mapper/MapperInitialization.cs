@@ -13,8 +13,12 @@ namespace Articles.Configurations.Mapper
         {
             /// Mapper Article
             CreateMap<Article, ArticleViewRequest>().ReverseMap();
+            CreateMap<Article, ArticleViewAdminRequest>().ReverseMap();
+
             CreateMap<Article, ArticleCreateRequest>().ReverseMap();
             CreateMap<Article, ArticleUpdateRequest>().ReverseMap();
+            CreateMap<Article, ArticleUpdateByAdminRequest>().ReverseMap();
+
             /// Mapper User
             CreateMap<ApiUser, UserDTO>().ReverseMap();
         }

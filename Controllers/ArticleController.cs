@@ -46,6 +46,15 @@ namespace Project_Articles.Controllers
             var articles = await _articleRepository.GetArticles();
             return Ok(new Response(Resource.GET_SUCCESS, null, articles));
         }
+        [Authorize(Roles = "Admin")]
+        [Route("getArticlesByAdmin")]
+        [HttpGet]
+        public async Task<IActionResult> GetArticlesByAdmin()
+        {
+            var articles = await _articleRepository.GetArticlesByAdmin();
+            return Ok(new Response(Resource.GET_SUCCESS, null, articles));
+        }
+
 
         [HttpGet("{id:int}")]
         [AllowAnonymous]
@@ -69,7 +78,7 @@ namespace Project_Articles.Controllers
 
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> CreateArticle([FromForm] ArticleCreateRequest request)
         {
             if (request.Category == 1 || request.Category == 2 || request.Category == 3 || request.Category == 4 || request.Category == 5)
@@ -88,21 +97,53 @@ namespace Project_Articles.Controllers
                 article.AuthorName = $"{user.FirstName} {user.LastName}";
                 await _unitOfWork.Articles.InsertAsync(article);
                 await _unitOfWork.Save();
-                return Ok(new Response(Resource.CREATE_SUCCESS, null, article));
+                return Ok(new Response(Resource.CREATE_SUCCESS, "", article));
             }
             throw new Exception("Yêu cầu chọn đúng chủ đề");
         }
 
+        [HttpPut("admin/{id:int}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateArticleByAdmin(int id, [FromForm] ArticleUpdateByAdminRequest request)
+        {
+            var article = await _unitOfWork.Articles.GetAsync(q => q.Id == id);
+            if (article == null)
+            {
+                throw new Exception("Article Not Found");
+            }
+            if (request.Thumbnails != null)
+            {
+                article.ImagePath = await _imageRepository.SaveFile(request.Thumbnails);
+            }
+            article.ViewCount = request.ViewCount;
+            article.IsActive = request.IsActive;
+            _unitOfWork.Articles.Update(article);
+            await _unitOfWork.Save();
+            return Ok(article);
+        }
         [HttpPut("{id:int}")]
-        [Authorize]
+        [Authorize(Roles = "User,Admin")]
+
         public async Task<IActionResult> UpdateArticle(int id, [FromForm] ArticleUpdateRequest request)
         {
-            var result = await _articleRepository.UpdateArticle(id, request);
-            return Ok(new Response(result));
+            var article = await _unitOfWork.Articles.GetAsync(q => q.Id == id);
+            if (article == null)
+            {
+                throw new Exception("Article Not Found");
+            }
+            if (request.Thumbnails != null)
+            {
+                article.ImagePath = await _imageRepository.SaveFile(request.Thumbnails);
+            }
+            article.Title = request.Title;
+            article.Content = request.Content;
+            _unitOfWork.Articles.Update(article);
+            await _unitOfWork.Save();
+            return Ok(article);
         }
 
         [HttpDelete("{id:int}")]
-        [Authorize]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> DeleteArticle(int id)
         {
             var result = await _articleRepository.DeleteArticle(id);

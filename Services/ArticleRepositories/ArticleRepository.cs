@@ -91,10 +91,29 @@ namespace Articles.Services.ArticleRepositories
         public async Task<object> GetArticles()
         {
             var articles = await _unitOfWork.Articles.GetAllAsync();
-            var results = _mapper.Map<IList<ArticleViewRequest>>(articles);
+            var filterByActive = from article in articles
+                                 where article.IsActive == true
+                                 select article;
+            var results = _mapper.Map<IList<ArticleViewRequest>>(filterByActive);
+            var countResult = results.Count();
             return new
             {
-                results
+                results,
+                countResult
+            };
+        }
+        public async Task<object> GetArticlesByAdmin()
+        {
+            var articles = await _unitOfWork.Articles.GetAllAsync();
+            var filterByActive = from article in articles
+                                 where article.IsActive == false
+                                 select article;
+            var results = _mapper.Map<IList<ArticleViewAdminRequest>>(filterByActive);
+            var countResult = results.Count();
+            return new
+            {
+                results,
+                countResult
             };
         }
         public async Task<string> UpdateArticle(int id, ArticleUpdateRequest request)

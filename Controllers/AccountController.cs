@@ -37,6 +37,7 @@ namespace Articles.Controllers
         public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
         {
             var result = await _userRepository.RegisterAsync(userDTO);
+
             return Ok(new Response(Resource.REGISTER_SUCCESS));
         }
 
@@ -87,7 +88,8 @@ namespace Articles.Controllers
                 LastName = user.LastName,
                 Email = user.Email,
                 Avatar = user.Avatar,
-                Id = id
+                Id = id,
+                IsAdmin = user.isAdmin
             };
             return Ok(result);
         }

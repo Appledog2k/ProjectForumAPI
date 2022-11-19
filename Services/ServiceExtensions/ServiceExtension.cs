@@ -32,6 +32,7 @@ namespace Articles.Services.ServiceSetting
         public static void ConfigureIdentity(this IServiceCollection services)
         {
             services.AddIdentity<ApiUser, IdentityRole>()
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<DatabaseContext>()
             .AddDefaultTokenProviders();
         }

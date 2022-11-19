@@ -2,6 +2,7 @@
 using Articles.Models.Data.DbContext;
 using Articles.Services.ServiceSetting;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace Articles
@@ -18,7 +19,11 @@ namespace Articles
             services.ConfigureCors();
 
             services.AddRazorPages();
-
+            services.AddAuthorization(options =>
+{
+    options.AddPolicy("ElevatedRights", policy =>
+          policy.RequireRole("Admin", "User"));
+});
             services.ConfigureEmailService(Configuration);
 
             services.ConfigureIdentity();
@@ -26,12 +31,12 @@ namespace Articles
             services.AddAutoMapper(typeof(Startup));
 
             services.AddControllers(opt =>
-{
-    opt.AllowEmptyInputInBodyModelBinding = false;
-}).AddNewtonsoftJson(op =>
-            op.SerializerSettings.ReferenceLoopHandling =
-            Newtonsoft.Json.ReferenceLoopHandling.Ignore)
-            .AddFluentValidation();
+                    {
+                        opt.AllowEmptyInputInBodyModelBinding = false;
+                    }).AddNewtonsoftJson(op =>
+                                op.SerializerSettings.ReferenceLoopHandling =
+                                Newtonsoft.Json.ReferenceLoopHandling.Ignore)
+                                .AddFluentValidation();
 
             services.AddDbContext<DatabaseContext>(options =>
                       {

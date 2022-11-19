@@ -13,5 +13,6 @@ namespace Articles.Models.Data.AggregateUsers
         /// Bài viết của đối tượng
         /// </summary>
         public ICollection<Article> Articles { get; set; }
+        public bool isAdmin { get; set; } = false;
     }
 }
