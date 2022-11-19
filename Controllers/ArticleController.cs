@@ -75,6 +75,16 @@ namespace Project_Articles.Controllers
             // var result = _mapper.Map<ArticleViewRequest>(article);
             return Ok(new Response(Resource.GET_SUCCESS, null, articles));
         }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("filterByKey")]
+        public async Task<IActionResult> GetArticleByKey(string key)
+        {
+            var articles = await _articleRepository.GetArticlesByKey(key);
+            // var article = await _unitOfWork.Articles.GetAsync(query => query.Id == id);
+            // var result = _mapper.Map<ArticleViewRequest>(article);
+            return Ok(new Response(Resource.GET_SUCCESS, null, articles));
+        }
 
 
         [HttpPost]
@@ -111,11 +121,6 @@ namespace Project_Articles.Controllers
             {
                 throw new Exception("Article Not Found");
             }
-            if (request.Thumbnails != null)
-            {
-                article.ImagePath = await _imageRepository.SaveFile(request.Thumbnails);
-            }
-            article.ViewCount = request.ViewCount;
             article.IsActive = request.IsActive;
             _unitOfWork.Articles.Update(article);
             await _unitOfWork.Save();

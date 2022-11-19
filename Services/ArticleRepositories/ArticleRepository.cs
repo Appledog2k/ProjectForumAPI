@@ -1,5 +1,7 @@
 
 using System.Security.Claims;
+using System.Text;
+using System.Text.RegularExpressions;
 using Articles.GenericRepository;
 using Articles.Models;
 using Articles.Models.Data.AggregateArticles;
@@ -83,11 +85,47 @@ namespace Articles.Services.ArticleRepositories
         {
             var articles = await _unitOfWork.Articles.GetAllAsync();
             var results = from article in articles
-                          where article.Category == request
+                          where article.Category == request && article.IsActive == true
                           select article;
             return new { results };
         }
+        public async Task<object> GetArticlesByKey(string key)
+        {
+            var articles = await _unitOfWork.Articles.GetAllAsync();
+            // var filterByKey = from article in articles
+            //                   where article.Title.Contains(key) || article.Content.Contains(key)
+            //                   select article;
+            // return new { filterByKey };
+            var query = articles.Where(delegate (Article c)
+                {
+                    if (ConvertToUnSign(c.Title).IndexOf(key, StringComparison.CurrentCultureIgnoreCase) >= 0
+                    || ConvertToUnSign(c.Content).IndexOf(key, StringComparison.CurrentCultureIgnoreCase) >= 0
+                    || c.Title.Contains(key)
+                    || c.Content.Contains(key))
+                        return true;
+                    else
+                        return false;
+                }).AsQueryable();
+            return new { query };
 
+
+        }
+        private string ConvertToUnSign(string input)
+        {
+            input = input.Trim();
+            for (int i = 0x20; i < 0x30; i++)
+            {
+                input = input.Replace(((char)i).ToString(), " ");
+            }
+            Regex regex = new Regex(@"\p{IsCombiningDiacriticalMarks}+");
+            string str = input.Normalize(NormalizationForm.FormD);
+            string str2 = regex.Replace(str, string.Empty).Replace('đ', 'd').Replace('Đ', 'D');
+            while (str2.IndexOf("?") >= 0)
+            {
+                str2 = str2.Remove(str2.IndexOf("?"), 1);
+            }
+            return str2;
+        }
         public async Task<object> GetArticles()
         {
             var articles = await _unitOfWork.Articles.GetAllAsync();

@@ -8,7 +8,7 @@ namespace Articles.Services.ArticleRepositories
     {
         Task<object> GetArticles();
         Task<object> GetArticlesByAdmin();
-
+        Task<Object> GetArticlesByKey(string key);
         Task<object> GetArticle(int id);
         Task<object> GetArticleByCategory(int request);
         Task<object> CreateArticle(ArticleCreateRequest request);
